@@ -473,6 +473,113 @@
     [data-theme="light"] .vocab-phonetic { background: #f3f4f6; }
     [data-theme="light"] .vocab-streak-badge { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.05)); }
 
+    /* ========== Mobile Responsive ========== */
+    @media (max-width: 700px) {
+      .container { padding: 12px 14px; }
+      
+      /* Header mobile */
+      .header { flex-wrap: wrap; gap: 10px; }
+      .header-left { width: 100%; justify-content: space-between; gap: 10px; }
+      .header-time { gap: 10px; }
+      .clock { font-size: 2rem; }
+      .greeting { font-size: 0.8rem; }
+      .date { font-size: 0.7rem; }
+      .search-box { order: 2; flex: 1; }
+      .search-box input { width: 100%; }
+      .search-box input:focus { width: 100%; }
+      .header-actions { position: absolute; right: 14px; top: 12px; }
+      .icon-btn { width: 34px; height: 34px; }
+      
+      /* Quick links mobile */
+      .quick-links { padding: 10px 12px; gap: 6px; border-radius: 16px; }
+      .quick-link { padding: 6px 10px; font-size: 11px; border-radius: 16px; }
+      .quick-link img { width: 14px; height: 14px; }
+      .quick-link .key { display: none; }
+      .add-link-btn, .batch-link-btn { display: none; }
+      
+      /* Cards mobile */
+      .card { padding: 12px; border-radius: 14px; }
+      .card-header { margin-bottom: 8px; }
+      .card-title { font-size: 0.65rem; }
+      .card-action { width: 26px; height: 26px; }
+      
+      /* Countdown mobile */
+      .countdown-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .countdown-item { padding: 10px 6px; border-radius: 12px; }
+      .countdown-name { font-size: 11px; }
+      .countdown-days { font-size: 1.3rem; }
+      
+      /* Todo mobile */
+      .todo-tabs { padding: 3px; border-radius: 10px; }
+      .todo-tab { padding: 6px; font-size: 10px; border-radius: 8px; }
+      .todo-input { padding: 8px 12px; font-size: 12px; border-radius: 10px; }
+      .todo-add-btn { padding: 8px 14px; border-radius: 10px; }
+      .todo-item { padding: 8px 10px; border-radius: 10px; }
+      .todo-text { font-size: 12px; }
+      
+      /* Weather mobile */
+      .weather-icon { font-size: 2rem; }
+      .weather-temp { font-size: 1.6rem; }
+      .weather-desc { font-size: 12px; }
+      .weather-detail { font-size: 10px; }
+      .weather-location { font-size: 11px; }
+      
+      /* Quote mobile */
+      .quote-content { font-size: 13px; min-height: 50px; }
+      .quote-author { font-size: 11px; }
+      
+      /* Joke mobile */
+      .joke-content { font-size: 12px; min-height: 60px; }
+      .joke-setup { font-size: 12px; }
+      .joke-punchline { font-size: 12px; }
+      
+      /* Vocab mobile */
+      .vocab-top-bar { margin-bottom: 8px; }
+      .vocab-streak-badge { padding: 3px 8px; font-size: 11px; border-radius: 12px; }
+      .vocab-streak-badge .fire { font-size: 12px; }
+      .vocab-xp-badge { padding: 3px 8px; font-size: 10px; border-radius: 12px; }
+      .vocab-progress-bar { height: 2px; margin-bottom: 10px; }
+      .vocab-flashcard { min-height: 100px; padding: 14px 12px; border-radius: 12px; }
+      .vocab-word { font-size: 1.3rem; }
+      .vocab-phonetic { font-size: 11px; padding: 2px 6px; border-radius: 10px; }
+      .vocab-phonetic .sound-icon { font-size: 10px; }
+      .vocab-meaning { font-size: 12px; }
+      .vocab-divider { width: 30px; margin: 8px 0; }
+      .vocab-example { font-size: 10px; padding: 6px 8px; border-radius: 6px; }
+      .vocab-synonyms span { padding: 2px 6px; font-size: 9px; border-radius: 8px; }
+      .vocab-counter { font-size: 9px; top: 6px; right: 8px; }
+      .vocab-mastery { top: 6px; left: 8px; gap: 2px; }
+      .vocab-mastery-dot { width: 5px; height: 5px; }
+      .vocab-tap-hint { font-size: 9px; bottom: 6px; }
+      .vocab-actions { gap: 6px; margin-top: 8px; }
+      .vocab-btn { padding: 6px 8px; min-width: 48px; border-radius: 8px; font-size: 9px; }
+      .vocab-btn .icon { font-size: 14px; }
+      .vocab-btn-reveal { padding: 8px; font-size: 11px; border-radius: 8px; }
+      .vocab-complete { padding: 16px 8px; }
+      .vocab-complete-icon { font-size: 28px; }
+      .vocab-complete-title { font-size: 14px; }
+      .vocab-complete-text { font-size: 11px; }
+      
+      /* Modal mobile */
+      .modal { margin: 16px; padding: 18px; border-radius: 18px; max-width: calc(100% - 32px); }
+      .modal-title { font-size: 0.9rem; }
+      .form-input { padding: 10px 14px; font-size: 13px; }
+      .btn { padding: 10px 16px; font-size: 12px; }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 380px) {
+      .container { padding: 10px 10px; }
+      .clock { font-size: 1.7rem; }
+      .header-time { gap: 8px; }
+      .quick-links { padding: 8px 10px; }
+      .quick-link { padding: 5px 8px; font-size: 10px; }
+      .countdown-list { grid-template-columns: 1fr 1fr; }
+      .vocab-btn { min-width: 42px; padding: 5px 6px; }
+      .vocab-btn .icon { font-size: 12px; }
+      .vocab-word { font-size: 1.2rem; }
+    }
+
     /* Footer */
     .footer { display: none; }
     .footer-btn { display: none; }

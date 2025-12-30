@@ -163,7 +163,7 @@
     /* Quick Links Bar */
     .quick-links {
       display: flex; align-items: center; gap: 8px;
-      padding: 12px 16px; margin-bottom: 16px;
+      padding: 12px 16px; margin-bottom: 10px;
       background: rgba(255,255,255,0.04);
       border: none; border-radius: 20px;
       overflow-x: auto; flex-wrap: wrap;
@@ -210,6 +210,24 @@
     .greeting { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
     .date { font-size: 0.75rem; color: var(--text-muted); }
     [data-theme="light"] .clock { color: #333; }
+    
+    /* Header weather widget */
+    .header-weather {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px; margin-left: 16px;
+      background: rgba(255,255,255,0.06); border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .header-weather:hover { background: rgba(255,255,255,0.1); }
+    .hw-icon { font-size: 1.2rem; }
+    .hw-temp { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+    .hw-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .hw-location { font-size: 0.65rem; color: var(--text-muted); margin-left: 4px; }
+    [data-theme="light"] .header-weather { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .header-weather:hover { background: rgba(0,0,0,0.08); }
+    
+    /* Header right section */
+    .header-right { display: flex; align-items: center; gap: 12px; }
 
     /* Dashboard */
     .dashboard {
@@ -479,15 +497,20 @@
       
       /* Header mobile */
       .header { flex-wrap: wrap; gap: 10px; }
-      .header-left { width: 100%; justify-content: space-between; gap: 10px; }
+      .header-left { width: 100%; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
       .header-time { gap: 10px; }
       .clock { font-size: 2rem; }
       .greeting { font-size: 0.8rem; }
       .date { font-size: 0.7rem; }
-      .search-box { order: 2; flex: 1; }
+      .header-weather { margin-left: 0; padding: 4px 10px; }
+      .hw-icon { font-size: 1rem; }
+      .hw-temp { font-size: 0.9rem; }
+      .hw-desc { font-size: 0.7rem; }
+      .header-right { width: 100%; justify-content: space-between; }
+      .search-box { flex: 1; }
       .search-box input { width: 100%; }
       .search-box input:focus { width: 100%; }
-      .header-actions { position: absolute; right: 14px; top: 12px; }
+      .header-actions { position: static; }
       .icon-btn { width: 34px; height: 34px; }
       
       /* Quick links mobile */
@@ -517,21 +540,10 @@
       .todo-item { padding: 8px 10px; border-radius: 10px; }
       .todo-text { font-size: 12px; }
       
-      /* Weather mobile */
-      .weather-icon { font-size: 2rem; }
-      .weather-temp { font-size: 1.6rem; }
-      .weather-desc { font-size: 12px; }
-      .weather-detail { font-size: 10px; }
-      .weather-location { font-size: 11px; }
-      
-      /* Quote mobile */
-      .quote-content { font-size: 13px; min-height: 50px; }
-      .quote-author { font-size: 11px; }
-      
-      /* Joke mobile */
-      .joke-content { font-size: 12px; min-height: 60px; }
-      .joke-setup { font-size: 12px; }
-      .joke-punchline { font-size: 12px; }
+      /* Daily quote mobile */
+      .daily-quote { margin-bottom: 8px; }
+      .daily-quote .quote-text { font-size: 11px; }
+      .quote-actions { opacity: 1; }
       
       /* Vocab mobile */
       .vocab-top-bar { margin-bottom: 8px; }
@@ -705,31 +717,25 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
-    /* Weather Card */
-    .weather-main { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-    .weather-icon { font-size: 2.5rem; }
-    .weather-temp { font-size: 2rem; font-weight: 600; }
-    .weather-desc { font-size: 13px; color: var(--text-secondary); }
-    .weather-details { display: flex; gap: 12px; flex-wrap: wrap; }
-    .weather-detail { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
-    .weather-location { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-    .weather-loading { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
-    .weather-error { text-align: center; padding: 16px; color: var(--text-muted); font-size: 12px; }
-    .weather-error button { margin-top: 8px; padding: 6px 12px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 11px; cursor: pointer; }
-
-    /* Quote Card */
-    .quote-content { font-size: 14px; font-style: italic; line-height: 1.6; margin-bottom: 10px; min-height: 60px; }
-    .quote-author { font-size: 12px; color: var(--text-secondary); text-align: right; }
-    .quote-author::before { content: '— '; }
-    .quote-refresh { margin-top: 10px; }
-
-    /* Joke Card */
-    .joke-content { font-size: 13px; line-height: 1.6; min-height: 80px; }
-    .joke-setup { margin-bottom: 8px; }
-    .joke-punchline { color: var(--accent); font-weight: 500; cursor: pointer; opacity: 0; transition: opacity 0.3s; }
-    .joke-punchline.show { opacity: 1; }
-    .joke-single { color: var(--text-primary); }
-    .joke-actions { display: flex; gap: 6px; margin-top: 10px; }
+    /* Daily Quote - minimal text line */
+    .daily-quote {
+      display: flex; align-items: center; gap: 6px;
+      margin: 0 0 8px 0; padding: 0;
+      background: none !important; border: none !important;
+    }
+    .daily-quote .quote-text { 
+      font-size: 11px; font-style: italic; color: var(--text-muted); 
+      flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      opacity: 0.6;
+    }
+    .quote-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.2s; }
+    .daily-quote:hover .quote-actions { opacity: 0.5; }
+    .quote-btn {
+      width: 16px; height: 16px; border-radius: 3px;
+      background: transparent; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 10px; transition: all 0.2s;
+    }
+    .quote-btn:hover { color: var(--text-primary); }
 
     /* Dictionary enhancement for vocab */
     .vocab-dict-btn { font-size: 11px; color: var(--accent); cursor: pointer; margin-left: 8px; }
@@ -758,70 +764,46 @@
             <span class="date" id="dateDisplay">2024年1月1日 星期一</span>
           </div>
         </div>
+        <!-- Weather in header -->
+        <div class="header-weather" id="headerWeather">
+          <span class="hw-icon">🌡️</span>
+          <span class="hw-temp">--°</span>
+          <span class="hw-desc">加载中</span>
+        </div>
+      </div>
+      <div class="header-right">
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
           <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
         </div>
-      </div>
-      <div class="header-actions">
-        <button class="icon-btn" id="settingsBtn" title="设置">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
-          </svg>
-        </button>
-        <button class="icon-btn" id="themeToggle" title="主题">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
-            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-          </svg>
-        </button>
+        <div class="header-actions">
+          <button class="icon-btn" id="settingsBtn" title="设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="themeToggle" title="主题">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
+
+    <!-- Daily Quote under header -->
+    <div class="daily-quote" id="dailyQuote">
+      <span id="quoteContent" class="quote-text">"加载中..."</span>
+      <span class="quote-actions">
+        <button class="quote-btn" id="toggleQuoteType" title="切换">↻</button>
+      </span>
+    </div>
 
     <nav class="quick-links" id="quickLinks"></nav>
 
     <main class="dashboard">
-      <!-- Weather Card -->
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">天气</span>
-          <button class="card-action" id="refreshWeatherBtn" title="刷新">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          </button>
-        </div>
-        <div id="weatherContent">
-          <div class="weather-loading">获取天气中...</div>
-        </div>
-      </section>
-
-      <!-- Quote Card -->
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">每日一言</span>
-          <button class="card-action" id="refreshQuoteBtn" title="换一条">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          </button>
-        </div>
-        <div id="quoteContent">
-          <div class="quote-content">加载中...</div>
-          <div class="quote-author"></div>
-        </div>
-      </section>
-
-      <!-- Joke Card -->
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">开心一刻</span>
-          <button class="card-action" id="refreshJokeBtn" title="换一个">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          </button>
-        </div>
-        <div id="jokeContent">
-          <div class="joke-content">加载中...</div>
-        </div>
-      </section>
-
       <section class="card">
         <div class="card-header">
           <span class="card-title">倒计时</span>
@@ -1662,17 +1644,34 @@
     // ========== API Features ==========
 
     // Weather API (wttr.in - free, no key needed)
-    const weatherCodeIcons = {
-      '113': '☀️', '116': '⛅', '119': '☁️', '122': '☁️', '143': '🌫️',
-      '176': '🌦️', '179': '🌨️', '182': '🌨️', '185': '🌨️', '200': '⛈️',
-      '227': '❄️', '230': '❄️', '248': '🌫️', '260': '🌫️', '263': '🌦️',
-      '266': '🌦️', '281': '🌨️', '284': '🌨️', '293': '🌦️', '296': '🌧️',
-      '299': '🌧️', '302': '🌧️', '305': '🌧️', '308': '🌧️', '311': '🌨️',
-      '314': '🌨️', '317': '🌨️', '320': '🌨️', '323': '🌨️', '326': '🌨️',
-      '329': '❄️', '332': '❄️', '335': '❄️', '338': '❄️', '350': '🌨️',
-      '353': '🌦️', '356': '🌧️', '359': '🌧️', '362': '🌨️', '365': '🌨️',
-      '368': '🌨️', '371': '❄️', '374': '🌨️', '377': '🌨️', '386': '⛈️',
-      '389': '⛈️', '392': '⛈️', '395': '❄️'
+    // WMO Weather codes for Open-Meteo
+    const wmoWeatherCodes = {
+      0: { icon: '☀️', desc: '晴' },
+      1: { icon: '🌤️', desc: '大部晴朗' },
+      2: { icon: '⛅', desc: '多云' },
+      3: { icon: '☁️', desc: '阴' },
+      45: { icon: '🌫️', desc: '雾' },
+      48: { icon: '🌫️', desc: '冻雾' },
+      51: { icon: '🌦️', desc: '小毛毛雨' },
+      53: { icon: '🌦️', desc: '毛毛雨' },
+      55: { icon: '🌧️', desc: '大毛毛雨' },
+      61: { icon: '🌧️', desc: '小雨' },
+      63: { icon: '🌧️', desc: '中雨' },
+      65: { icon: '🌧️', desc: '大雨' },
+      66: { icon: '🌨️', desc: '冻小雨' },
+      67: { icon: '🌨️', desc: '冻大雨' },
+      71: { icon: '🌨️', desc: '小雪' },
+      73: { icon: '🌨️', desc: '中雪' },
+      75: { icon: '❄️', desc: '大雪' },
+      77: { icon: '🌨️', desc: '雪粒' },
+      80: { icon: '🌦️', desc: '小阵雨' },
+      81: { icon: '🌧️', desc: '阵雨' },
+      82: { icon: '🌧️', desc: '大阵雨' },
+      85: { icon: '🌨️', desc: '小阵雪' },
+      86: { icon: '❄️', desc: '大阵雪' },
+      95: { icon: '⛈️', desc: '雷暴' },
+      96: { icon: '⛈️', desc: '雷暴伴小冰雹' },
+      99: { icon: '⛈️', desc: '雷暴伴冰雹' }
     };
 
     // Cache helper functions
@@ -1708,7 +1707,7 @@
     }
 
     async function fetchWeather(forceRefresh = false) {
-      const content = el('weatherContent');
+      const hw = el('headerWeather');
       
       // Try cache first
       if (!forceRefresh) {
@@ -1719,65 +1718,77 @@
         }
       }
       
-      content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
+      hw.innerHTML = '<span class="hw-icon">🌡️</span><span class="hw-desc">获取中...</span>';
 
       try {
+        // Get user location
+        const pos = await new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error('Geolocation not supported'));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+        
+        const { latitude, longitude } = pos.coords;
+        
+        // Fetch weather from Open-Meteo
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
-        const res = await fetch('https://wttr.in/?format=j1', { signal: controller.signal });
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,wind_speed_10m&timezone=auto`;
+        const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (!res.ok) throw new Error('API error');
-        const w = await res.json();
+        const data = await res.json();
         
-        // Cache the response
-        setCache(CACHE_KEYS.weather, w);
-        renderWeather(w);
+        // Get location name via reverse geocoding
+        let locationName = `${latitude.toFixed(1)}, ${longitude.toFixed(1)}`;
+        try {
+          const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=zh`, { signal: AbortSignal.timeout(5000) });
+          if (geoRes.ok) {
+            const geo = await geoRes.json();
+            locationName = geo.address?.city || geo.address?.town || geo.address?.county || locationName;
+          }
+        } catch {}
+        
+        const weatherData = { ...data, locationName };
+        setCache(CACHE_KEYS.weather, weatherData);
+        renderWeather(weatherData);
         
       } catch (err) {
         console.error('Weather error:', err);
-        content.replaceChildren();
-        const errDiv = ce('div', 'weather-error', '获取天气失败');
-        const retryBtn = ce('button', '', '重试');
-        retryBtn.onclick = () => fetchWeather(true);
-        errDiv.appendChild(retryBtn);
-        content.appendChild(errDiv);
+        // Fallback: use default location (Shanghai)
+        try {
+          const url = 'https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,wind_speed_10m&timezone=auto';
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            const weatherData = { ...data, locationName: '上海' };
+            setCache(CACHE_KEYS.weather, weatherData);
+            renderWeather(weatherData);
+            return;
+          }
+        } catch {}
+        
+        hw.innerHTML = '<span class="hw-icon">❌</span><span class="hw-desc">获取失败</span>';
+        hw.onclick = () => fetchWeather(true);
       }
     }
     
     function renderWeather(w) {
-      const content = el('weatherContent');
-      const current = w.current_condition[0];
-      const area = w.nearest_area[0];
-      const location = area.areaName[0].value + ', ' + area.country[0].value;
-      const weatherCode = current.weatherCode;
-      const icon = weatherCodeIcons[weatherCode] || '🌡️';
-      const desc = current.lang_zh && current.lang_zh[0] ? current.lang_zh[0].value : current.weatherDesc[0].value;
-
-      content.replaceChildren();
+      const hw = el('headerWeather');
+      const current = w.current;
+      const weatherCode = current.weather_code;
+      const weather = wmoWeatherCodes[weatherCode] || { icon: '🌡️', desc: '未知' };
       
-      // Location
-      const locDiv = ce('div', 'weather-location');
-      locDiv.textContent = '📍 ' + location;
-      content.appendChild(locDiv);
-      
-      // Main weather
-      const mainDiv = ce('div', 'weather-main');
-      const iconSpan = ce('span', 'weather-icon', icon);
-      const infoDiv = ce('div');
-      const tempDiv = ce('div', 'weather-temp', current.temp_C + '°C');
-      const descDiv = ce('div', 'weather-desc', desc);
-      infoDiv.appendChild(tempDiv);
-      infoDiv.appendChild(descDiv);
-      mainDiv.appendChild(iconSpan);
-      mainDiv.appendChild(infoDiv);
-      content.appendChild(mainDiv);
-      
-      // Details
-      const detailsDiv = ce('div', 'weather-details');
-      detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + current.humidity + '%'));
-      detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + current.windspeedKmph + 'km/h'));
-      detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + current.FeelsLikeC + '°C 体感'));
-      content.appendChild(detailsDiv);
+      hw.innerHTML = `
+        <span class="hw-icon">${weather.icon}</span>
+        <span class="hw-temp">${Math.round(current.temperature_2m)}°</span>
+        <span class="hw-desc">${weather.desc}</span>
+        <span class="hw-location">📍${w.locationName}</span>
+      `;
+      hw.title = `${w.locationName}\n体感 ${Math.round(current.apparent_temperature)}°C\n湿度 ${current.relative_humidity_2m}%\n风速 ${Math.round(current.wind_speed_10m)}km/h\n点击刷新`;
+      hw.onclick = () => fetchWeather(true);
     }
 
     // Quote API (Quotable - free, no key needed)
@@ -1804,7 +1815,7 @@
       }
       
       try {
-        const res = await fetch('https://api.quotable.io/random?maxLength=150');
+        const res = await fetch('https://api.quotable.io/random?maxLength=100');
         if (!res.ok) throw new Error('API error');
         const q = await res.json();
         
@@ -1817,19 +1828,25 @@
       }
     }
     
+    let quoteMode = 'quote'; // 'quote' or 'joke'
+    
     function renderQuote(q) {
       const content = el('quoteContent');
-      content.replaceChildren();
-      const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
-      const authorDiv = ce('div', 'quote-author', q.author);
-      content.appendChild(quoteDiv);
-      content.appendChild(authorDiv);
+      content.innerHTML = `"${q.content}" — ${q.author}`;
+    }
+    
+    function renderJokeInline(j) {
+      const content = el('quoteContent');
+      if (j.type === 'twopart') {
+        content.innerHTML = `${j.setup} <span style="color:var(--accent);cursor:pointer" onclick="this.textContent='${j.delivery.replace(/'/g, "\\'")}'">[点击揭晓]</span>`;
+      } else {
+        content.textContent = j.joke;
+      }
     }
 
     // Joke API (JokeAPI - free, no key needed)
     let currentJokePunchline = '';
     async function fetchJoke(forceRefresh = false) {
-      const content = el('jokeContent');
       const fallbackJokes = [
         { setup: 'Why do programmers prefer dark mode?', delivery: 'Because light attracts bugs!' },
         { setup: 'Why do Java developers wear glasses?', delivery: "Because they don't C#!" },
@@ -1842,7 +1859,7 @@
       if (!forceRefresh) {
         const cached = getCache(CACHE_KEYS.joke);
         if (cached) {
-          renderJoke(cached);
+          renderJokeInline(cached);
           return;
         }
       }
@@ -1853,41 +1870,21 @@
         const j = await res.json();
         
         setCache(CACHE_KEYS.joke, j);
-        renderJoke(j);
+        renderJokeInline(j);
       } catch (err) {
         // Fallback jokes
         const j = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
-        renderJoke({ type: 'twopart', setup: j.setup, delivery: j.delivery });
+        renderJokeInline({ type: 'twopart', setup: j.setup, delivery: j.delivery });
       }
     }
     
     function renderJoke(j) {
       const content = el('jokeContent');
-      content.replaceChildren();
-      const jokeDiv = ce('div', 'joke-content');
-      
       if (j.type === 'twopart') {
         currentJokePunchline = j.delivery;
-        const setupDiv = ce('div', 'joke-setup', j.setup);
-        const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
-        punchDiv.id = 'jokePunchline';
-        punchDiv.onclick = showPunchline;
-        jokeDiv.appendChild(setupDiv);
-        jokeDiv.appendChild(punchDiv);
+        content.innerHTML = `<span class="joke-text">${j.setup} <span class="joke-punchline" onclick="this.textContent='${j.delivery.replace(/'/g, "\\'")}'; this.classList.add('show');">点击揭晓...</span></span>`;
       } else {
-        const singleDiv = ce('div', 'joke-single', j.joke);
-        jokeDiv.appendChild(singleDiv);
-      }
-      content.appendChild(jokeDiv);
-    }
-
-    function showPunchline() {
-      const pl = el('jokePunchline');
-      if (pl && currentJokePunchline) {
-        pl.textContent = currentJokePunchline;
-        pl.classList.add('show');
-        pl.style.cursor = 'default';
-        pl.onclick = null;
+        content.innerHTML = `<span class="joke-text">${j.joke}</span>`;
       }
     }
 
@@ -1934,15 +1931,19 @@
       }
     }
 
-    // Event listeners for new features
-    el('refreshWeatherBtn').onclick = () => fetchWeather(true);
-    el('refreshQuoteBtn').onclick = () => fetchQuote(true);
-    el('refreshJokeBtn').onclick = () => { currentJokePunchline = ''; fetchJoke(true); };
+    // Event listeners - Quote toggle
+    el('toggleQuoteType').onclick = () => {
+      quoteMode = quoteMode === 'quote' ? 'joke' : 'quote';
+      if (quoteMode === 'quote') {
+        fetchQuote(true);
+      } else {
+        fetchJoke(true);
+      }
+    };
 
     // Initialize API features
     fetchWeather();
     fetchQuote();
-    fetchJoke();
   </script>
 </body>
 </html>

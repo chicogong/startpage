@@ -214,10 +214,10 @@
     /* Dashboard */
     .dashboard {
       display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 14px; flex: 1;
+      gap: 14px; flex: 1; align-content: start;
     }
-    @media (max-width: 900px) { .dashboard { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 600px) { .dashboard { grid-template-columns: 1fr; } }
+    @media (max-width: 1100px) { .dashboard { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 700px) { .dashboard { grid-template-columns: 1fr; } }
 
     /* Card */
     .card {
@@ -441,6 +441,43 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+    /* Weather Card */
+    .weather-main { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .weather-icon { font-size: 2.5rem; }
+    .weather-temp { font-size: 2rem; font-weight: 600; }
+    .weather-desc { font-size: 13px; color: var(--text-secondary); }
+    .weather-details { display: flex; gap: 12px; flex-wrap: wrap; }
+    .weather-detail { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .weather-location { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+    .weather-loading { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
+    .weather-error { text-align: center; padding: 16px; color: var(--text-muted); font-size: 12px; }
+    .weather-error button { margin-top: 8px; padding: 6px 12px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 11px; cursor: pointer; }
+
+    /* Quote Card */
+    .quote-content { font-size: 14px; font-style: italic; line-height: 1.6; margin-bottom: 10px; min-height: 60px; }
+    .quote-author { font-size: 12px; color: var(--text-secondary); text-align: right; }
+    .quote-author::before { content: '— '; }
+    .quote-refresh { margin-top: 10px; }
+
+    /* Joke Card */
+    .joke-content { font-size: 13px; line-height: 1.6; min-height: 80px; }
+    .joke-setup { margin-bottom: 8px; }
+    .joke-punchline { color: var(--accent); font-weight: 500; cursor: pointer; opacity: 0; transition: opacity 0.3s; }
+    .joke-punchline.show { opacity: 1; }
+    .joke-single { color: var(--text-primary); }
+    .joke-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+    /* Dictionary enhancement for vocab */
+    .vocab-dict-btn { font-size: 11px; color: var(--accent); cursor: pointer; margin-left: 8px; }
+    .vocab-dict-btn:hover { text-decoration: underline; }
+    .dict-result { font-size: 11px; color: var(--text-muted); margin-top: 4px; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+    .dict-phonetics { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .dict-phonetic { cursor: pointer; color: var(--accent); }
+    .dict-phonetic:hover { text-decoration: underline; }
+    .dict-meanings { max-height: 100px; overflow-y: auto; }
+    .dict-meaning { margin-bottom: 4px; }
+    .dict-pos { font-weight: 600; color: var(--text-secondary); margin-right: 4px; }
   </style>
 </head>
 <body>
@@ -482,6 +519,46 @@
     <nav class="quick-links" id="quickLinks"></nav>
 
     <main class="dashboard">
+      <!-- Weather Card -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">天气</span>
+          <button class="card-action" id="refreshWeatherBtn" title="刷新">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+          </button>
+        </div>
+        <div id="weatherContent">
+          <div class="weather-loading">获取天气中...</div>
+        </div>
+      </section>
+
+      <!-- Quote Card -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">每日一言</span>
+          <button class="card-action" id="refreshQuoteBtn" title="换一条">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+          </button>
+        </div>
+        <div id="quoteContent">
+          <div class="quote-content">加载中...</div>
+          <div class="quote-author"></div>
+        </div>
+      </section>
+
+      <!-- Joke Card -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">开心一刻</span>
+          <button class="card-action" id="refreshJokeBtn" title="换一个">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+          </button>
+        </div>
+        <div id="jokeContent">
+          <div class="joke-content">加载中...</div>
+        </div>
+      </section>
+
       <section class="card">
         <div class="card-header">
           <span class="card-title">倒计时</span>
@@ -663,6 +740,7 @@
         </div>
       </div>
       <div class="form-group"><label class="form-label">自定义背景URL</label><input type="url" class="form-input" id="customBgUrl" placeholder="https://..."></div>
+      <div class="form-group"><label class="form-label">OpenWeatherMap API Key</label><input type="text" class="form-input" id="weatherApiKey" placeholder="获取: openweathermap.org/api"></div>
       <div class="settings-section">
         <div class="settings-section-title">数据管理</div>
         <div class="settings-actions">
@@ -678,7 +756,7 @@
   <script>
     const STORAGE_KEY = 'startpage_data';
     const defaultData = {
-      theme: 'dark', background: 'gradient-1', customBg: '',
+      theme: 'dark', background: 'gradient-1', customBg: '', weatherApiKey: '',
       links: [
         // AI Assistants
         { name: 'ChatGPT', url: 'https://chat.openai.com', key: 'c' },
@@ -1033,8 +1111,20 @@
     el('closeVocabModal').onclick = () => closeModal('vocabModal');
     el('cancelVocabBtn').onclick = () => closeModal('vocabModal');
     el('vocabDisplay').onclick = () => { if (!showMeaning && words.length) toggleMean(); };
-    el('settingsBtn').onclick = () => openModal('settingsModal');
-    el('closeSettingsModal').onclick = () => closeModal('settingsModal');
+    el('settingsBtn').onclick = () => { 
+      el('weatherApiKey').value = data.weatherApiKey || '';
+      openModal('settingsModal'); 
+    };
+    el('closeSettingsModal').onclick = () => {
+      // Save weather API key when closing settings
+      const newKey = el('weatherApiKey').value.trim();
+      if (newKey !== data.weatherApiKey) {
+        data.weatherApiKey = newKey;
+        saveData();
+        fetchWeather();
+      }
+      closeModal('settingsModal');
+    };
     document.querySelectorAll('.bg-option').forEach(o => o.onclick = () => {
       document.querySelectorAll('.bg-option').forEach(x => x.classList.remove('active')); o.classList.add('active');
       data.background = o.dataset.bg; data.customBg = ''; el('customBgUrl').value = '';
@@ -1061,6 +1151,275 @@
     // Init
     initTheme(); initBg(); updateClock(); renderLinks(); renderCountdowns(); renderTodos(); updateStats(); nextWord();
     setInterval(updateClock, 1000); setInterval(renderCountdowns, 60000);
+
+    // ========== API Features ==========
+
+    // Weather API (OpenWeatherMap - free tier)
+    const weatherIcons = {
+      '01d': '☀️', '01n': '🌙', '02d': '⛅', '02n': '☁️', '03d': '☁️', '03n': '☁️',
+      '04d': '☁️', '04n': '☁️', '09d': '🌧️', '09n': '🌧️', '10d': '🌦️', '10n': '🌧️',
+      '11d': '⛈️', '11n': '⛈️', '13d': '❄️', '13n': '❄️', '50d': '🌫️', '50n': '🌫️'
+    };
+
+    function renderWeatherContent(html) {
+      el('weatherContent').innerHTML = html;
+    }
+
+    async function fetchWeather() {
+      const content = el('weatherContent');
+      const apiKey = data.weatherApiKey;
+      
+      // Check if API key is set
+      if (!apiKey) {
+        content.replaceChildren();
+        const errDiv = ce('div', 'weather-error');
+        errDiv.textContent = '请在设置中配置 OpenWeatherMap API Key';
+        const link = ce('a');
+        link.href = 'https://openweathermap.org/api';
+        link.target = '_blank';
+        link.style.cssText = 'color:var(--accent);font-size:11px;display:block;margin-top:4px;';
+        link.textContent = '获取免费 API Key';
+        errDiv.appendChild(document.createElement('br'));
+        errDiv.appendChild(link);
+        content.appendChild(errDiv);
+        return;
+      }
+
+      content.replaceChildren(ce('div', 'weather-loading', '获取位置中...'));
+
+      try {
+        // Get user location
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+        
+        const { latitude: lat, longitude: lon } = pos.coords;
+        content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
+
+        const res = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey + '&units=metric&lang=zh_cn');
+        if (!res.ok) throw new Error('API error');
+        const w = await res.json();
+
+        content.replaceChildren();
+        
+        // Location
+        const locDiv = ce('div', 'weather-location');
+        locDiv.textContent = '📍 ' + w.name;
+        content.appendChild(locDiv);
+        
+        // Main weather
+        const mainDiv = ce('div', 'weather-main');
+        const iconSpan = ce('span', 'weather-icon', weatherIcons[w.weather[0].icon] || '🌡️');
+        const infoDiv = ce('div');
+        const tempDiv = ce('div', 'weather-temp', Math.round(w.main.temp) + '°C');
+        const descDiv = ce('div', 'weather-desc', w.weather[0].description);
+        infoDiv.appendChild(tempDiv);
+        infoDiv.appendChild(descDiv);
+        mainDiv.appendChild(iconSpan);
+        mainDiv.appendChild(infoDiv);
+        content.appendChild(mainDiv);
+        
+        // Details
+        const detailsDiv = ce('div', 'weather-details');
+        detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + w.main.humidity + '%'));
+        detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + w.wind.speed + 'm/s'));
+        detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + Math.round(w.main.feels_like) + '°C 体感'));
+        content.appendChild(detailsDiv);
+        
+      } catch (err) {
+        console.error('Weather error:', err);
+        content.replaceChildren();
+        const errDiv = ce('div', 'weather-error', err.code === 1 ? '请允许位置访问' : '获取天气失败');
+        const retryBtn = ce('button', '', '重试');
+        retryBtn.onclick = fetchWeather;
+        errDiv.appendChild(retryBtn);
+        content.appendChild(errDiv);
+      }
+    }
+
+    // Quote API (Quotable - free, no key needed)
+    async function fetchQuote() {
+      const content = el('quoteContent');
+      const fallbackQuotes = [
+        { content: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' },
+        { content: 'Innovation distinguishes between a leader and a follower.', author: 'Steve Jobs' },
+        { content: 'Stay hungry, stay foolish.', author: 'Steve Jobs' },
+        { content: 'The future belongs to those who believe in the beauty of their dreams.', author: 'Eleanor Roosevelt' },
+        { content: 'It is during our darkest moments that we must focus to see the light.', author: 'Aristotle' },
+        { content: 'The only thing we have to fear is fear itself.', author: 'Franklin D. Roosevelt' },
+        { content: 'In the middle of difficulty lies opportunity.', author: 'Albert Einstein' },
+        { content: 'Life is what happens when you are busy making other plans.', author: 'John Lennon' }
+      ];
+      
+      try {
+        const res = await fetch('https://api.quotable.io/random?maxLength=150');
+        if (!res.ok) throw new Error('API error');
+        const q = await res.json();
+        
+        content.replaceChildren();
+        const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
+        const authorDiv = ce('div', 'quote-author', q.author);
+        content.appendChild(quoteDiv);
+        content.appendChild(authorDiv);
+      } catch (err) {
+        // Fallback to local quotes if API fails
+        const q = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+        content.replaceChildren();
+        const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
+        const authorDiv = ce('div', 'quote-author', q.author);
+        content.appendChild(quoteDiv);
+        content.appendChild(authorDiv);
+      }
+    }
+
+    // Joke API (JokeAPI - free, no key needed)
+    let currentJokePunchline = '';
+    async function fetchJoke() {
+      const content = el('jokeContent');
+      const fallbackJokes = [
+        { setup: 'Why do programmers prefer dark mode?', delivery: 'Because light attracts bugs!' },
+        { setup: 'Why do Java developers wear glasses?', delivery: "Because they don't C#!" },
+        { setup: 'A SQL query walks into a bar, walks up to two tables and asks...', delivery: '"Can I join you?"' },
+        { setup: 'Why did the developer go broke?', delivery: 'Because he used up all his cache!' },
+        { setup: "What's a programmer's favorite hangout place?", delivery: 'Foo Bar!' }
+      ];
+      
+      try {
+        const res = await fetch('https://v2.jokeapi.dev/joke/Programming,Misc,Pun?blacklistFlags=nsfw,religious,political,racist,sexist&type=twopart,single');
+        if (!res.ok) throw new Error('API error');
+        const j = await res.json();
+        
+        content.replaceChildren();
+        const jokeDiv = ce('div', 'joke-content');
+        
+        if (j.type === 'twopart') {
+          currentJokePunchline = j.delivery;
+          const setupDiv = ce('div', 'joke-setup', j.setup);
+          const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
+          punchDiv.id = 'jokePunchline';
+          punchDiv.onclick = showPunchline;
+          jokeDiv.appendChild(setupDiv);
+          jokeDiv.appendChild(punchDiv);
+        } else {
+          const singleDiv = ce('div', 'joke-single', j.joke);
+          jokeDiv.appendChild(singleDiv);
+        }
+        content.appendChild(jokeDiv);
+      } catch (err) {
+        // Fallback jokes
+        const j = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+        currentJokePunchline = j.delivery;
+        
+        content.replaceChildren();
+        const jokeDiv = ce('div', 'joke-content');
+        const setupDiv = ce('div', 'joke-setup', j.setup);
+        const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
+        punchDiv.id = 'jokePunchline';
+        punchDiv.onclick = showPunchline;
+        jokeDiv.appendChild(setupDiv);
+        jokeDiv.appendChild(punchDiv);
+        content.appendChild(jokeDiv);
+      }
+    }
+
+    function showPunchline() {
+      const pl = el('jokePunchline');
+      if (pl && currentJokePunchline) {
+        pl.textContent = currentJokePunchline;
+        pl.classList.add('show');
+        pl.style.cursor = 'default';
+        pl.onclick = null;
+      }
+    }
+
+    // Free Dictionary API - enhance vocab card
+    async function lookupWord(word) {
+      try {
+        const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data[0];
+      } catch (err) {
+        return null;
+      }
+    }
+
+    // Add dictionary lookup button to vocab display
+    const originalNextWord = nextWord;
+    nextWord = function() {
+      originalNextWord();
+      // Add lookup button after word is displayed
+      const wordEl = el('vocabWord');
+      const word = wordEl.textContent;
+      if (word && word !== '-' && word !== '完成!') {
+        const existingBtn = document.querySelector('.vocab-dict-btn');
+        if (existingBtn) existingBtn.remove();
+        
+        const btn = ce('span', 'vocab-dict-btn', '📖 查词典');
+        btn.onclick = async (e) => {
+          e.stopPropagation();
+          btn.textContent = '查询中...';
+          const dictData = await lookupWord(word);
+          if (dictData) {
+            showDictResult(dictData);
+          } else {
+            btn.textContent = '未找到';
+            setTimeout(() => { btn.textContent = '📖 查词典'; }, 2000);
+          }
+        };
+        wordEl.appendChild(btn);
+      }
+    };
+
+    function showDictResult(data) {
+      const existing = document.querySelector('.dict-result');
+      if (existing) existing.remove();
+      
+      const display = el('vocabDisplay');
+      const result = ce('div', 'dict-result');
+      
+      // Phonetics with audio
+      const phoneticsDiv = ce('div', 'dict-phonetics');
+      if (data.phonetics) {
+        data.phonetics.forEach(p => {
+          if (p.text) {
+            const phoneticSpan = ce('span', 'dict-phonetic', p.text + (p.audio ? ' 🔊' : ''));
+            if (p.audio) {
+              phoneticSpan.onclick = () => new Audio(p.audio).play();
+            }
+            phoneticsDiv.appendChild(phoneticSpan);
+          }
+        });
+      }
+      result.appendChild(phoneticsDiv);
+      
+      // Meanings
+      const meaningsDiv = ce('div', 'dict-meanings');
+      if (data.meanings) {
+        data.meanings.slice(0, 3).forEach(m => {
+          const meaningDiv = ce('div', 'dict-meaning');
+          const posSpan = ce('span', 'dict-pos', m.partOfSpeech);
+          meaningDiv.appendChild(posSpan);
+          if (m.definitions && m.definitions[0]) {
+            meaningDiv.appendChild(document.createTextNode(m.definitions[0].definition));
+          }
+          meaningsDiv.appendChild(meaningDiv);
+        });
+      }
+      result.appendChild(meaningsDiv);
+      
+      display.appendChild(result);
+    }
+
+    // Event listeners for new features
+    el('refreshWeatherBtn').onclick = fetchWeather;
+    el('refreshQuoteBtn').onclick = fetchQuote;
+    el('refreshJokeBtn').onclick = () => { currentJokePunchline = ''; fetchJoke(); };
+
+    // Initialize API features
+    fetchWeather();
+    fetchQuote();
+    fetchJoke();
   </script>
 </body>
 </html>

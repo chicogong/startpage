@@ -319,193 +319,159 @@
 
     /* Vocab - Modern Flashcard Design */
     .vocab-card { grid-column: span 1; }
-    @media (min-width: 1100px) { .vocab-card { grid-column: span 2; } }
     
     /* Top bar with streak and stats */
-    .vocab-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .vocab-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .vocab-streak-badge {
-      display: flex; align-items: center; gap: 6px;
-      padding: 6px 12px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(239,68,68,0.1));
-      border-radius: 20px; font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 10px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(239,68,68,0.1));
+      border-radius: 16px; font-size: 12px; font-weight: 600;
     }
-    .vocab-streak-badge .fire { font-size: 16px; }
+    .vocab-streak-badge .fire { font-size: 14px; }
     .vocab-streak-badge .count { color: var(--warning); }
     .vocab-xp-badge {
       display: flex; align-items: center; gap: 4px;
-      padding: 6px 12px; background: rgba(34,197,94,0.1);
-      border-radius: 20px; font-size: 12px; color: var(--success); font-weight: 600;
+      padding: 4px 10px; background: rgba(34,197,94,0.1);
+      border-radius: 16px; font-size: 11px; color: var(--success); font-weight: 600;
     }
     
     /* Progress bar */
-    .vocab-progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
+    .vocab-progress-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 12px; overflow: hidden; }
     .vocab-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); border-radius: 2px; transition: width 0.3s ease; }
     
     /* Main flashcard */
     .vocab-flashcard {
-      position: relative; min-height: 220px;
-      background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px; padding: 32px 24px;
+      position: relative; min-height: 120px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px; padding: 16px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.3s ease;
-      perspective: 1000px;
+      cursor: pointer; transition: all 0.2s ease;
     }
-    .vocab-flashcard:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .vocab-flashcard:active { transform: scale(0.98); }
+    .vocab-flashcard:hover { background: rgba(255,255,255,0.05); }
+    .vocab-flashcard:active { transform: scale(0.99); }
     
     .vocab-word {
-      font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px;
-      margin-bottom: 8px; text-align: center;
-      background: linear-gradient(135deg, var(--text-primary), var(--accent));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px;
+      margin-bottom: 4px; text-align: center; color: var(--text-primary);
     }
     .vocab-phonetic {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 15px; color: var(--text-muted);
-      padding: 4px 12px; background: rgba(255,255,255,0.05);
-      border-radius: 20px; cursor: pointer; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--text-muted);
+      padding: 2px 8px; background: rgba(255,255,255,0.05);
+      border-radius: 12px; cursor: pointer; transition: all 0.2s;
     }
     .vocab-phonetic:hover { background: rgba(59,130,246,0.2); color: var(--accent); }
-    .vocab-phonetic .sound-icon { font-size: 14px; }
+    .vocab-phonetic .sound-icon { font-size: 11px; }
     
     .vocab-divider {
-      width: 60px; height: 2px; margin: 16px 0;
+      width: 40px; height: 2px; margin: 10px 0;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0; transition: opacity 0.3s;
+      opacity: 0; transition: opacity 0.2s;
     }
     .vocab-divider.show { opacity: 1; }
     
     .vocab-meaning {
-      font-size: 16px; color: var(--text-secondary); text-align: center;
-      max-width: 400px; line-height: 1.6;
-      opacity: 0; transform: translateY(10px);
-      transition: all 0.3s ease;
+      font-size: 13px; color: var(--text-secondary); text-align: center;
+      max-width: 100%; line-height: 1.5;
+      opacity: 0; transform: translateY(5px);
+      transition: all 0.2s ease;
     }
     .vocab-meaning.show { opacity: 1; transform: translateY(0); }
     
     .vocab-extra {
-      margin-top: 12px; width: 100%; max-width: 400px;
-      opacity: 0; transform: translateY(10px);
-      transition: all 0.3s ease 0.1s;
+      margin-top: 8px; width: 100%;
+      opacity: 0; transform: translateY(5px);
+      transition: all 0.2s ease 0.05s;
     }
     .vocab-extra.show { opacity: 1; transform: translateY(0); }
     
     .vocab-example {
-      font-size: 13px; color: var(--text-muted); font-style: italic;
-      padding: 10px 14px; background: rgba(59,130,246,0.08);
-      border-radius: 12px; border-left: 3px solid var(--accent);
-      text-align: left; margin-bottom: 8px;
+      font-size: 11px; color: var(--text-muted); font-style: italic;
+      padding: 8px 10px; background: rgba(59,130,246,0.08);
+      border-radius: 8px; border-left: 2px solid var(--accent);
+      text-align: left; margin-bottom: 6px;
     }
     .vocab-synonyms {
-      display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+      display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
     }
     .vocab-synonyms span {
-      padding: 4px 10px; background: rgba(255,255,255,0.06);
-      border-radius: 12px; font-size: 12px; color: var(--text-secondary);
-      transition: all 0.2s;
+      padding: 2px 8px; background: rgba(255,255,255,0.06);
+      border-radius: 10px; font-size: 10px; color: var(--text-secondary);
     }
-    .vocab-synonyms span:hover { background: rgba(59,130,246,0.15); color: var(--accent); }
     
     /* Tap hint */
     .vocab-tap-hint {
-      position: absolute; bottom: 12px;
-      font-size: 11px; color: var(--text-muted);
-      display: flex; align-items: center; gap: 4px;
-      opacity: 0.6;
+      position: absolute; bottom: 8px;
+      font-size: 10px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 3px;
+      opacity: 0.5;
     }
     .vocab-tap-hint.hidden { display: none; }
     
     /* Card counter */
     .vocab-counter {
-      position: absolute; top: 12px; right: 16px;
-      font-size: 12px; color: var(--text-muted);
-      background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 12px;
+      position: absolute; top: 8px; right: 10px;
+      font-size: 10px; color: var(--text-muted);
     }
     
     /* Mastery indicator */
     .vocab-mastery {
-      position: absolute; top: 12px; left: 16px;
-      display: flex; gap: 3px;
+      position: absolute; top: 8px; left: 10px;
+      display: flex; gap: 2px;
     }
     .vocab-mastery-dot {
-      width: 8px; height: 8px; border-radius: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
       background: rgba(255,255,255,0.15);
     }
     .vocab-mastery-dot.filled { background: var(--success); }
-    .vocab-mastery-dot.current { background: var(--accent); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .vocab-mastery-dot.current { background: var(--accent); }
     
-    /* Rating buttons - Tinder style */
+    /* Rating buttons */
     .vocab-actions {
-      display: flex; justify-content: center; gap: 12px;
-      margin-top: 16px; padding-top: 16px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: 10px;
     }
     .vocab-btn {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      padding: 14px 20px; min-width: 80px;
-      border: none; border-radius: 16px;
-      font-size: 12px; font-weight: 600; cursor: pointer;
-      transition: all 0.2s ease;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 8px 12px; min-width: 56px;
+      border: none; border-radius: 10px;
+      font-size: 10px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s ease;
     }
-    .vocab-btn .icon { font-size: 20px; }
-    .vocab-btn.forgot {
-      background: rgba(239,68,68,0.15); color: var(--danger);
-    }
-    .vocab-btn.forgot:hover { background: var(--danger); color: white; transform: scale(1.05); }
-    .vocab-btn.hard {
-      background: rgba(245,158,11,0.15); color: var(--warning);
-    }
-    .vocab-btn.hard:hover { background: var(--warning); color: white; transform: scale(1.05); }
-    .vocab-btn.good {
-      background: rgba(34,197,94,0.15); color: var(--success);
-    }
-    .vocab-btn.good:hover { background: var(--success); color: white; transform: scale(1.05); }
-    .vocab-btn.easy {
-      background: rgba(59,130,246,0.15); color: var(--accent);
-    }
-    .vocab-btn.easy:hover { background: var(--accent); color: white; transform: scale(1.05); }
+    .vocab-btn .icon { font-size: 16px; }
+    .vocab-btn.forgot { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .vocab-btn.forgot:hover { background: rgba(239,68,68,0.25); }
+    .vocab-btn.hard { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .vocab-btn.hard:hover { background: rgba(245,158,11,0.25); }
+    .vocab-btn.good { background: rgba(34,197,94,0.12); color: var(--success); }
+    .vocab-btn.good:hover { background: rgba(34,197,94,0.25); }
+    .vocab-btn.easy { background: rgba(59,130,246,0.12); color: var(--accent); }
+    .vocab-btn.easy:hover { background: rgba(59,130,246,0.25); }
     
     .vocab-btn-reveal {
-      width: 100%; padding: 16px;
-      background: linear-gradient(135deg, var(--accent), #6366f1);
-      border: none; border-radius: 14px;
-      color: white; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 10px;
+      background: var(--accent);
+      border: none; border-radius: 10px;
+      color: white; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .vocab-btn-reveal:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(59,130,246,0.4); }
+    .vocab-btn-reveal:hover { background: var(--accent-hover); }
     
     /* Complete state */
-    .vocab-complete {
-      text-align: center; padding: 40px 20px;
-    }
-    .vocab-complete-icon { font-size: 48px; margin-bottom: 12px; }
-    .vocab-complete-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--success); }
-    .vocab-complete-text { font-size: 14px; color: var(--text-secondary); }
+    .vocab-complete { text-align: center; padding: 20px 10px; }
+    .vocab-complete-icon { font-size: 32px; margin-bottom: 8px; }
+    .vocab-complete-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--success); }
+    .vocab-complete-text { font-size: 12px; color: var(--text-secondary); }
     
     /* Header actions */
     .vocab-header-actions { display: flex; gap: 4px; }
     
-    /* Light theme adjustments */
-    [data-theme="light"] .vocab-flashcard {
-      background: linear-gradient(145deg, #fff, #f8fafc);
-      border-color: #e5e7eb;
-    }
-    [data-theme="light"] .vocab-word {
-      background: linear-gradient(135deg, #1f2937, var(--accent));
-      -webkit-background-clip: text; background-clip: text;
-    }
+    /* Light theme */
+    [data-theme="light"] .vocab-flashcard { background: #fff; border-color: #eee; }
     [data-theme="light"] .vocab-phonetic { background: #f3f4f6; }
     [data-theme="light"] .vocab-streak-badge { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.05)); }
-    
-    @media (max-width: 700px) {
-      .vocab-flashcard { min-height: 180px; padding: 24px 16px; }
-      .vocab-word { font-size: 1.8rem; }
-      .vocab-actions { flex-wrap: wrap; }
-      .vocab-btn { min-width: 70px; padding: 12px 14px; }
-    }
 
     /* Footer */
     .footer { display: none; }

@@ -1531,7 +1531,6 @@
     el('saveVocabBtn').onclick = addVocab;
     el('closeVocabModal').onclick = () => closeModal('vocabModal');
     el('cancelVocabBtn').onclick = () => closeModal('vocabModal');
-    el('vocabDisplay').onclick = () => { if (!showMeaning && words.length) toggleMean(); };
     el('settingsBtn').onclick = () => openModal('settingsModal');
     el('closeSettingsModal').onclick = () => closeModal('settingsModal');
     document.querySelectorAll('.bg-option').forEach(o => o.onclick = () => {

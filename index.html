@@ -1542,8 +1542,50 @@
       '389': '⛈️', '392': '⛈️', '395': '❄️'
     };
 
-    async function fetchWeather() {
+    // Cache helper functions
+    const CACHE_KEYS = {
+      weather: 'cache_weather',
+      quote: 'cache_quote',
+      joke: 'cache_joke'
+    };
+    const CACHE_DURATION = {
+      weather: 30 * 60 * 1000,  // 30 minutes
+      quote: 60 * 60 * 1000,    // 1 hour
+      joke: 60 * 60 * 1000      // 1 hour
+    };
+    
+    function getCache(key) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+        const { data, timestamp } = JSON.parse(cached);
+        const duration = CACHE_DURATION[key.replace('cache_', '')] || 30 * 60 * 1000;
+        if (Date.now() - timestamp > duration) {
+          localStorage.removeItem(key);
+          return null;
+        }
+        return data;
+      } catch { return null; }
+    }
+    
+    function setCache(key, data) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+      } catch (e) { console.log('Cache write failed:', e); }
+    }
+
+    async function fetchWeather(forceRefresh = false) {
       const content = el('weatherContent');
+      
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = getCache(CACHE_KEYS.weather);
+        if (cached) {
+          renderWeather(cached);
+          return;
+        }
+      }
+      
       content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
 
       try {
@@ -1551,52 +1593,59 @@
         if (!res.ok) throw new Error('API error');
         const w = await res.json();
         
-        const current = w.current_condition[0];
-        const area = w.nearest_area[0];
-        const location = area.areaName[0].value + ', ' + area.country[0].value;
-        const weatherCode = current.weatherCode;
-        const icon = weatherCodeIcons[weatherCode] || '🌡️';
-        const desc = current.lang_zh && current.lang_zh[0] ? current.lang_zh[0].value : current.weatherDesc[0].value;
-
-        content.replaceChildren();
-        
-        // Location
-        const locDiv = ce('div', 'weather-location');
-        locDiv.textContent = '📍 ' + location;
-        content.appendChild(locDiv);
-        
-        // Main weather
-        const mainDiv = ce('div', 'weather-main');
-        const iconSpan = ce('span', 'weather-icon', icon);
-        const infoDiv = ce('div');
-        const tempDiv = ce('div', 'weather-temp', current.temp_C + '°C');
-        const descDiv = ce('div', 'weather-desc', desc);
-        infoDiv.appendChild(tempDiv);
-        infoDiv.appendChild(descDiv);
-        mainDiv.appendChild(iconSpan);
-        mainDiv.appendChild(infoDiv);
-        content.appendChild(mainDiv);
-        
-        // Details
-        const detailsDiv = ce('div', 'weather-details');
-        detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + current.humidity + '%'));
-        detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + current.windspeedKmph + 'km/h'));
-        detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + current.FeelsLikeC + '°C 体感'));
-        content.appendChild(detailsDiv);
+        // Cache the response
+        setCache(CACHE_KEYS.weather, w);
+        renderWeather(w);
         
       } catch (err) {
         console.error('Weather error:', err);
         content.replaceChildren();
         const errDiv = ce('div', 'weather-error', '获取天气失败');
         const retryBtn = ce('button', '', '重试');
-        retryBtn.onclick = fetchWeather;
+        retryBtn.onclick = () => fetchWeather(true);
         errDiv.appendChild(retryBtn);
         content.appendChild(errDiv);
       }
     }
+    
+    function renderWeather(w) {
+      const content = el('weatherContent');
+      const current = w.current_condition[0];
+      const area = w.nearest_area[0];
+      const location = area.areaName[0].value + ', ' + area.country[0].value;
+      const weatherCode = current.weatherCode;
+      const icon = weatherCodeIcons[weatherCode] || '🌡️';
+      const desc = current.lang_zh && current.lang_zh[0] ? current.lang_zh[0].value : current.weatherDesc[0].value;
+
+      content.replaceChildren();
+      
+      // Location
+      const locDiv = ce('div', 'weather-location');
+      locDiv.textContent = '📍 ' + location;
+      content.appendChild(locDiv);
+      
+      // Main weather
+      const mainDiv = ce('div', 'weather-main');
+      const iconSpan = ce('span', 'weather-icon', icon);
+      const infoDiv = ce('div');
+      const tempDiv = ce('div', 'weather-temp', current.temp_C + '°C');
+      const descDiv = ce('div', 'weather-desc', desc);
+      infoDiv.appendChild(tempDiv);
+      infoDiv.appendChild(descDiv);
+      mainDiv.appendChild(iconSpan);
+      mainDiv.appendChild(infoDiv);
+      content.appendChild(mainDiv);
+      
+      // Details
+      const detailsDiv = ce('div', 'weather-details');
+      detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + current.humidity + '%'));
+      detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + current.windspeedKmph + 'km/h'));
+      detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + current.FeelsLikeC + '°C 体感'));
+      content.appendChild(detailsDiv);
+    }
 
     // Quote API (Quotable - free, no key needed)
-    async function fetchQuote() {
+    async function fetchQuote(forceRefresh = false) {
       const content = el('quoteContent');
       const fallbackQuotes = [
         { content: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' },
@@ -1609,30 +1658,41 @@
         { content: 'Life is what happens when you are busy making other plans.', author: 'John Lennon' }
       ];
       
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = getCache(CACHE_KEYS.quote);
+        if (cached) {
+          renderQuote(cached);
+          return;
+        }
+      }
+      
       try {
         const res = await fetch('https://api.quotable.io/random?maxLength=150');
         if (!res.ok) throw new Error('API error');
         const q = await res.json();
         
-        content.replaceChildren();
-        const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
-        const authorDiv = ce('div', 'quote-author', q.author);
-        content.appendChild(quoteDiv);
-        content.appendChild(authorDiv);
+        setCache(CACHE_KEYS.quote, q);
+        renderQuote(q);
       } catch (err) {
         // Fallback to local quotes if API fails
         const q = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
-        content.replaceChildren();
-        const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
-        const authorDiv = ce('div', 'quote-author', q.author);
-        content.appendChild(quoteDiv);
-        content.appendChild(authorDiv);
+        renderQuote(q);
       }
+    }
+    
+    function renderQuote(q) {
+      const content = el('quoteContent');
+      content.replaceChildren();
+      const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
+      const authorDiv = ce('div', 'quote-author', q.author);
+      content.appendChild(quoteDiv);
+      content.appendChild(authorDiv);
     }
 
     // Joke API (JokeAPI - free, no key needed)
     let currentJokePunchline = '';
-    async function fetchJoke() {
+    async function fetchJoke(forceRefresh = false) {
       const content = el('jokeContent');
       const fallbackJokes = [
         { setup: 'Why do programmers prefer dark mode?', delivery: 'Because light attracts bugs!' },
@@ -1642,42 +1702,47 @@
         { setup: "What's a programmer's favorite hangout place?", delivery: 'Foo Bar!' }
       ];
       
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = getCache(CACHE_KEYS.joke);
+        if (cached) {
+          renderJoke(cached);
+          return;
+        }
+      }
+      
       try {
         const res = await fetch('https://v2.jokeapi.dev/joke/Programming,Misc,Pun?blacklistFlags=nsfw,religious,political,racist,sexist&type=twopart,single');
         if (!res.ok) throw new Error('API error');
         const j = await res.json();
         
-        content.replaceChildren();
-        const jokeDiv = ce('div', 'joke-content');
-        
-        if (j.type === 'twopart') {
-          currentJokePunchline = j.delivery;
-          const setupDiv = ce('div', 'joke-setup', j.setup);
-          const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
-          punchDiv.id = 'jokePunchline';
-          punchDiv.onclick = showPunchline;
-          jokeDiv.appendChild(setupDiv);
-          jokeDiv.appendChild(punchDiv);
-        } else {
-          const singleDiv = ce('div', 'joke-single', j.joke);
-          jokeDiv.appendChild(singleDiv);
-        }
-        content.appendChild(jokeDiv);
+        setCache(CACHE_KEYS.joke, j);
+        renderJoke(j);
       } catch (err) {
         // Fallback jokes
         const j = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+        renderJoke({ type: 'twopart', setup: j.setup, delivery: j.delivery });
+      }
+    }
+    
+    function renderJoke(j) {
+      const content = el('jokeContent');
+      content.replaceChildren();
+      const jokeDiv = ce('div', 'joke-content');
+      
+      if (j.type === 'twopart') {
         currentJokePunchline = j.delivery;
-        
-        content.replaceChildren();
-        const jokeDiv = ce('div', 'joke-content');
         const setupDiv = ce('div', 'joke-setup', j.setup);
         const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
         punchDiv.id = 'jokePunchline';
         punchDiv.onclick = showPunchline;
         jokeDiv.appendChild(setupDiv);
         jokeDiv.appendChild(punchDiv);
-        content.appendChild(jokeDiv);
+      } else {
+        const singleDiv = ce('div', 'joke-single', j.joke);
+        jokeDiv.appendChild(singleDiv);
       }
+      content.appendChild(jokeDiv);
     }
 
     function showPunchline() {
@@ -1734,9 +1799,9 @@
     }
 
     // Event listeners for new features
-    el('refreshWeatherBtn').onclick = fetchWeather;
-    el('refreshQuoteBtn').onclick = fetchQuote;
-    el('refreshJokeBtn').onclick = () => { currentJokePunchline = ''; fetchJoke(); };
+    el('refreshWeatherBtn').onclick = () => fetchWeather(true);
+    el('refreshQuoteBtn').onclick = () => fetchQuote(true);
+    el('refreshJokeBtn').onclick = () => { currentJokePunchline = ''; fetchJoke(true); };
 
     // Initialize API features
     fetchWeather();

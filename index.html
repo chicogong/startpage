@@ -129,17 +129,28 @@
     .header-left { display: flex; align-items: center; gap: 20px; }
     .search-box { position: relative; }
     .search-box input {
-      width: 200px; padding: 8px 12px 8px 36px;
-      background: var(--glass-bg); backdrop-filter: blur(var(--blur));
-      border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+      width: 180px; padding: 10px 14px 10px 38px;
+      background: rgba(255,255,255,0.06);
+      border: none; border-radius: 20px;
       color: var(--text-primary); font-size: 13px; outline: none;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
     }
     .search-box input::placeholder { color: var(--text-muted); }
-    .search-box input:focus { width: 260px; border-color: var(--accent); }
+    .search-box input:focus { 
+      width: 240px; 
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
     .search-box svg {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
       width: 16px; height: 16px; color: var(--text-muted);
+    }
+    [data-theme="light"] .search-box input {
+      background: rgba(0,0,0,0.04);
+    }
+    [data-theme="light"] .search-box input:focus {
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
     }
     .header-actions { display: flex; gap: 6px; }
     .icon-btn {
@@ -227,24 +238,39 @@
     }
     .card-action:hover { background: var(--glass-bg); color: var(--text-primary); }
 
-    /* Countdown */
-    .countdown-list { display: flex; flex-direction: column; gap: 8px; }
-    .countdown-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px; background: rgba(255,255,255,0.03);
-      border-radius: var(--radius-sm); border-left: 3px solid var(--accent);
+    /* Countdown - Grid of small rounded cards */
+    .countdown-list { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+      gap: 8px; 
     }
-    .countdown-item.urgent { border-left-color: var(--danger); }
-    .countdown-item.soon { border-left-color: var(--warning); }
-    .countdown-info { flex: 1; }
-    .countdown-name { font-size: 13px; font-weight: 500; }
-    .countdown-date { font-size: 11px; color: var(--text-muted); }
-    .countdown-days { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+    .countdown-item {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 8px; background: rgba(255,255,255,0.04);
+      border-radius: 16px; text-align: center;
+      position: relative; transition: all 0.2s;
+    }
+    .countdown-item:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+    .countdown-item.urgent { background: rgba(239, 68, 68, 0.1); }
+    .countdown-item.soon { background: rgba(245, 158, 11, 0.1); }
+    .countdown-info { margin-bottom: 4px; }
+    .countdown-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+    .countdown-date { font-size: 10px; color: var(--text-muted); }
+    .countdown-time { display: flex; flex-direction: column; align-items: center; }
+    .countdown-days { font-size: 1.5rem; font-weight: 700; color: var(--accent); line-height: 1; }
     .countdown-item.urgent .countdown-days { color: var(--danger); }
     .countdown-item.soon .countdown-days { color: var(--warning); }
     .countdown-label { font-size: 10px; color: var(--text-muted); }
-    .countdown-delete { opacity: 0; transition: opacity 0.15s; }
+    .countdown-delete { 
+      position: absolute; top: 4px; right: 4px;
+      opacity: 0; transition: opacity 0.15s; 
+      width: 18px; height: 18px;
+    }
     .countdown-item:hover .countdown-delete { opacity: 1; }
+    [data-theme="light"] .countdown-item { background: #fff; border: 1px solid #eee; }
+    [data-theme="light"] .countdown-item:hover { background: #fafafa; }
+    [data-theme="light"] .countdown-item.urgent { background: #fef2f2; border-color: #fecaca; }
+    [data-theme="light"] .countdown-item.soon { background: #fffbeb; border-color: #fed7aa; }
 
     /* Todo */
     .todo-tabs {

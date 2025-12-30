@@ -768,7 +768,17 @@
           'light-3': '#f8fafc',
           'light-4': '#fef7f7'
         };
-        layer.style.background = g[data.background] || g['gradient-1'];
+        // Auto-correct background if theme doesn't match
+        const isLightTheme = data.theme === 'light';
+        const isLightBg = data.background && data.background.startsWith('light-');
+        if (isLightTheme && !isLightBg) {
+          data.background = 'light-1';
+          saveData();
+        } else if (!isLightTheme && isLightBg) {
+          data.background = 'gradient-1';
+          saveData();
+        }
+        layer.style.background = g[data.background] || (isLightTheme ? g['light-1'] : g['gradient-1']);
       }
       document.querySelectorAll('.bg-option').forEach(o => o.classList.toggle('active', o.dataset.bg === data.background));
     }

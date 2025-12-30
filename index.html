@@ -1126,6 +1126,11 @@
     function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
     function el(id) { return document.getElementById(id); }
     function ce(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; }
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
     function svg(d, w=14, h=14) {
       const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       s.setAttribute('width', w); s.setAttribute('height', h); s.setAttribute('viewBox', '0 0 24 24');
@@ -1327,10 +1332,12 @@
       
       if (!words.length) { 
         // Show complete state
+        // Note: vocabCounter is inside vocabFlashcard, so we update it before replacing innerHTML
         const flashcard = el('vocabFlashcard');
+        const counter = el('vocabCounter');
+        if (counter) counter.textContent = '完成';
         flashcard.innerHTML = '<div class="vocab-complete"><div class="vocab-complete-icon">🎉</div><div class="vocab-complete-title">今日完成!</div><div class="vocab-complete-text">明天继续保持学习哦</div></div>';
         el('vocabActions').replaceChildren();
-        el('vocabCounter').textContent = '完成';
         return; 
       }
       
@@ -1440,7 +1447,13 @@
     }
     
     // Random Word API - fetch new random words
-    async function fetchRandomWord() {
+    async function fetchRandomWord(retryCount = 0) {
+      const MAX_RETRIES = 5;
+      if (retryCount >= MAX_RETRIES) {
+        alert('多次尝试后仍无法获取有效单词，请稍后重试');
+        return;
+      }
+      
       const btn = el('fetchRandomWordBtn');
       btn.disabled = true;
       btn.style.opacity = '0.5';
@@ -1455,8 +1468,8 @@
         // Now look up the definition
         const dictRes = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(randomWord));
         if (!dictRes.ok) {
-          // Try another word if this one has no definition
-          return fetchRandomWord();
+          // Try another word if this one has no definition (with retry limit)
+          return fetchRandomWord(retryCount + 1);
         }
         const dictData = await dictRes.json();
         const entry = dictData[0];
@@ -1838,7 +1851,9 @@
     function renderJokeInline(j) {
       const content = el('quoteContent');
       if (j.type === 'twopart') {
-        content.innerHTML = `${j.setup} <span style="color:var(--accent);cursor:pointer" onclick="this.textContent='${j.delivery.replace(/'/g, "\\'")}'">[点击揭晓]</span>`;
+        const escapedSetup = escapeHtml(j.setup);
+        const escapedDelivery = escapeHtml(j.delivery).replace(/'/g, "\\'");
+        content.innerHTML = `${escapedSetup} <span style="color:var(--accent);cursor:pointer" onclick="this.textContent='${escapedDelivery}'">[点击揭晓]</span>`;
       } else {
         content.textContent = j.joke;
       }
@@ -1882,9 +1897,11 @@
       const content = el('jokeContent');
       if (j.type === 'twopart') {
         currentJokePunchline = j.delivery;
-        content.innerHTML = `<span class="joke-text">${j.setup} <span class="joke-punchline" onclick="this.textContent='${j.delivery.replace(/'/g, "\\'")}'; this.classList.add('show');">点击揭晓...</span></span>`;
+        const escapedSetup = escapeHtml(j.setup);
+        const escapedDelivery = escapeHtml(j.delivery).replace(/'/g, "\\'");
+        content.innerHTML = `<span class="joke-text">${escapedSetup} <span class="joke-punchline" onclick="this.textContent='${escapedDelivery}'; this.classList.add('show');">点击揭晓...</span></span>`;
       } else {
-        content.innerHTML = `<span class="joke-text">${j.joke}</span>`;
+        content.innerHTML = `<span class="joke-text">${escapeHtml(j.joke)}</span>`;
       }
     }
 

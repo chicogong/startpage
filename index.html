@@ -25,12 +25,14 @@
       --blur: 16px;
     }
     [data-theme="light"] {
-      --glass-bg: rgba(255, 255, 255, 0.65);
-      --glass-bg-hover: rgba(255, 255, 255, 0.8);
-      --glass-border: rgba(255, 255, 255, 0.4);
-      --text-primary: rgba(0, 0, 0, 0.85);
-      --text-secondary: rgba(0, 0, 0, 0.55);
-      --text-muted: rgba(0, 0, 0, 0.3);
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-bg-hover: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.06);
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a68;
+      --text-muted: #8a8aa3;
+      --accent: #5b6cf9;
+      --accent-hover: #4758e6;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
@@ -50,8 +52,21 @@
     }
     .bg-image.loaded { opacity: 1; }
     .bg-overlay { position: fixed; inset: 0; z-index: -1; background: rgba(0,0,0,0.25); }
-    [data-theme="light"] .bg-layer { background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); }
-    [data-theme="light"] .bg-overlay { background: rgba(255,255,255,0.1); }
+    [data-theme="light"] .bg-layer { background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 50%, #dfe4ea 100%); }
+    [data-theme="light"] .bg-overlay { background: transparent; }
+    [data-theme="light"] .card { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03); }
+    [data-theme="light"] .quick-links { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    [data-theme="light"] .quick-link { background: rgba(0,0,0,0.02); }
+    [data-theme="light"] .quick-link:hover { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .quick-link .key { background: rgba(0,0,0,0.06); color: var(--text-muted); }
+    [data-theme="light"] .clock { text-shadow: none; color: #1a1a2e; }
+    [data-theme="light"] .countdown-item { background: rgba(0,0,0,0.02); }
+    [data-theme="light"] .todo-item { background: rgba(0,0,0,0.02); }
+    [data-theme="light"] .vocab-stat { background: rgba(0,0,0,0.02); }
+    [data-theme="light"] .vocab-display { background: rgba(0,0,0,0.02); }
+    [data-theme="light"] .todo-tabs { background: rgba(0,0,0,0.03); }
+    [data-theme="light"] .todo-tab.active { background: rgba(255,255,255,0.8); }
+    [data-theme="light"] .icon-btn { box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
 
     .container {
       min-height: 100vh; display: flex; flex-direction: column;
@@ -315,10 +330,10 @@
     .bg-option.gradient-2 { background: linear-gradient(135deg, #1a0a2e, #16132e); }
     .bg-option.gradient-3 { background: linear-gradient(135deg, #0a1628, #1a2a4a); }
     .bg-option.gradient-4 { background: linear-gradient(135deg, #0d1f22, #1a3a3a); }
-    .bg-option.light-1 { background: linear-gradient(135deg, #e0e5ec, #f5f7fa); }
-    .bg-option.light-2 { background: linear-gradient(135deg, #ffecd2, #fcb69f); }
-    .bg-option.light-3 { background: linear-gradient(135deg, #a8edea, #fed6e3); }
-    .bg-option.light-4 { background: linear-gradient(135deg, #d4fc79, #96e6a1); }
+    .bg-option.light-1 { background: linear-gradient(135deg, #f5f7fa, #e4e8ed); }
+    .bg-option.light-2 { background: linear-gradient(135deg, #faf8f5, #efe9e0); }
+    .bg-option.light-3 { background: linear-gradient(135deg, #f0f4f8, #d9e2ec); }
+    .bg-option.light-4 { background: linear-gradient(135deg, #f5f0eb, #e8ddd4); }
 
     /* Textarea for batch */
     .form-textarea {
@@ -563,10 +578,10 @@
       <div class="form-group">
         <label class="form-label">亮色背景</label>
         <div class="bg-selector">
-          <div class="bg-option light-1" data-bg="light-1" title="银灰极简"></div>
-          <div class="bg-option light-2" data-bg="light-2" title="暖阳橙粉"></div>
-          <div class="bg-option light-3" data-bg="light-3" title="清新薄荷"></div>
-          <div class="bg-option light-4" data-bg="light-4" title="春日草绿"></div>
+          <div class="bg-option light-1" data-bg="light-1" title="冷灰"></div>
+          <div class="bg-option light-2" data-bg="light-2" title="暖米"></div>
+          <div class="bg-option light-3" data-bg="light-3" title="雾蓝"></div>
+          <div class="bg-option light-4" data-bg="light-4" title="奶茶"></div>
         </div>
       </div>
       <div class="form-group"><label class="form-label">自定义背景URL</label><input type="url" class="form-input" id="customBgUrl" placeholder="https://..."></div>
@@ -690,10 +705,10 @@
           'gradient-2': 'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #16132e 100%)',
           'gradient-3': 'linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0d2137 100%)',
           'gradient-4': 'linear-gradient(135deg, #0d1f22 0%, #1a3a3a 50%, #0f2d2d 100%)',
-          'light-1': 'linear-gradient(135deg, #e0e5ec 0%, #f5f7fa 50%, #e8ecf1 100%)',
-          'light-2': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-          'light-3': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-          'light-4': 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)'
+          'light-1': 'linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 50%, #dfe4ea 100%)',
+          'light-2': 'linear-gradient(135deg, #faf8f5 0%, #f5efe6 50%, #efe9e0 100%)',
+          'light-3': 'linear-gradient(135deg, #f0f4f8 0%, #e4ecf4 50%, #d9e2ec 100%)',
+          'light-4': 'linear-gradient(135deg, #f8f5f2 0%, #f0ebe4 50%, #e8ddd4 100%)'
         };
         layer.style.background = g[data.background] || g['gradient-1'];
       }

@@ -163,7 +163,7 @@
     /* Quick Links Bar */
     .quick-links {
       display: flex; align-items: center; gap: 8px;
-      padding: 12px 16px; margin-bottom: 16px;
+      padding: 12px 16px; margin-bottom: 10px;
       background: rgba(255,255,255,0.04);
       border: none; border-radius: 20px;
       overflow-x: auto; flex-wrap: wrap;
@@ -210,6 +210,24 @@
     .greeting { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
     .date { font-size: 0.75rem; color: var(--text-muted); }
     [data-theme="light"] .clock { color: #333; }
+    
+    /* Header weather widget */
+    .header-weather {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px; margin-left: 16px;
+      background: rgba(255,255,255,0.06); border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .header-weather:hover { background: rgba(255,255,255,0.1); }
+    .hw-icon { font-size: 1.2rem; }
+    .hw-temp { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+    .hw-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .hw-location { font-size: 0.65rem; color: var(--text-muted); margin-left: 4px; }
+    [data-theme="light"] .header-weather { background: rgba(0,0,0,0.05); }
+    [data-theme="light"] .header-weather:hover { background: rgba(0,0,0,0.08); }
+    
+    /* Header right section */
+    .header-right { display: flex; align-items: center; gap: 12px; }
 
     /* Dashboard */
     .dashboard {
@@ -317,31 +335,288 @@
     .todo-action-btn { width: 20px; height: 20px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; }
     .todo-action-btn:hover { color: var(--danger); }
 
-    /* Vocab */
-    .vocab-stats { display: flex; gap: 8px; margin-bottom: 10px; }
-    .vocab-stat { flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; }
-    .vocab-stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
-    .vocab-stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
-    .vocab-display {
-      padding: 20px; background: rgba(255,255,255,0.03);
-      border-radius: 16px; text-align: center;
-      margin-bottom: 10px; cursor: pointer; min-height: 90px;
-      display: flex; flex-direction: column; justify-content: center;
+    /* Vocab - Modern Flashcard Design */
+    .vocab-card { grid-column: span 1; }
+    
+    /* Top bar with streak and stats */
+    .vocab-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .vocab-streak-badge {
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 10px; background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(239,68,68,0.1));
+      border-radius: 16px; font-size: 12px; font-weight: 600;
     }
-    .vocab-word { font-size: 1.4rem; font-weight: 600; margin-bottom: 2px; }
-    .vocab-phonetic { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-    .vocab-meaning { font-size: 13px; color: var(--text-secondary); opacity: 0; transition: opacity 0.2s; }
-    .vocab-meaning.show { opacity: 1; }
-    .vocab-actions { display: flex; gap: 6px; }
+    .vocab-streak-badge .fire { font-size: 14px; }
+    .vocab-streak-badge .count { color: var(--warning); }
+    .vocab-xp-badge {
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 10px; background: rgba(34,197,94,0.1);
+      border-radius: 16px; font-size: 11px; color: var(--success); font-weight: 600;
+    }
+    
+    /* Progress bar */
+    .vocab-progress-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 12px; overflow: hidden; }
+    .vocab-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); border-radius: 2px; transition: width 0.3s ease; }
+    
+    /* Main flashcard */
+    .vocab-flashcard {
+      position: relative; min-height: 120px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .vocab-flashcard:hover { background: rgba(255,255,255,0.05); }
+    .vocab-flashcard:active { transform: scale(0.99); }
+    
+    .vocab-word {
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px;
+      margin-bottom: 4px; text-align: center; color: var(--text-primary);
+    }
+    .vocab-phonetic {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--text-muted);
+      padding: 2px 8px; background: rgba(255,255,255,0.05);
+      border-radius: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .vocab-phonetic:hover { background: rgba(59,130,246,0.2); color: var(--accent); }
+    .vocab-phonetic .sound-icon { font-size: 11px; }
+    
+    .vocab-divider {
+      width: 40px; height: 2px; margin: 10px 0;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .vocab-divider.show { opacity: 1; }
+    
+    .vocab-meaning {
+      font-size: 13px; color: var(--text-secondary); text-align: center;
+      max-width: 100%; line-height: 1.5;
+      opacity: 0; transform: translateY(5px);
+      transition: all 0.2s ease;
+    }
+    .vocab-meaning.show { opacity: 1; transform: translateY(0); }
+    
+    .vocab-extra {
+      margin-top: 8px; width: 100%;
+      opacity: 0; transform: translateY(5px);
+      transition: all 0.2s ease 0.05s;
+    }
+    .vocab-extra.show { opacity: 1; transform: translateY(0); }
+    
+    .vocab-example {
+      font-size: 11px; color: var(--text-muted); font-style: italic;
+      padding: 8px 10px; background: rgba(59,130,246,0.08);
+      border-radius: 8px; border-left: 2px solid var(--accent);
+      text-align: left; margin-bottom: 6px;
+    }
+    .vocab-synonyms {
+      display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+    }
+    .vocab-synonyms span {
+      padding: 2px 8px; background: rgba(255,255,255,0.06);
+      border-radius: 10px; font-size: 10px; color: var(--text-secondary);
+    }
+    
+    /* Tap hint */
+    .vocab-tap-hint {
+      position: absolute; bottom: 8px;
+      font-size: 10px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 3px;
+      opacity: 0.5;
+    }
+    .vocab-tap-hint.hidden { display: none; }
+    
+    /* Card counter */
+    .vocab-counter {
+      position: absolute; top: 8px; right: 10px;
+      font-size: 10px; color: var(--text-muted);
+    }
+    
+    /* Mastery indicator */
+    .vocab-mastery {
+      position: absolute; top: 8px; left: 10px;
+      display: flex; gap: 2px;
+    }
+    .vocab-mastery-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+    }
+    .vocab-mastery-dot.filled { background: var(--success); }
+    .vocab-mastery-dot.current { background: var(--accent); }
+    
+    /* Rating buttons */
+    .vocab-actions {
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: 10px;
+    }
     .vocab-btn {
-      flex: 1; padding: 10px; border: 1px solid var(--glass-border);
-      border-radius: 12px; background: transparent;
-      color: var(--text-primary); font-size: 12px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 8px 12px; min-width: 56px;
+      border: none; border-radius: 10px;
+      font-size: 10px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s ease;
     }
-    .vocab-btn:hover { background: rgba(255,255,255,0.08); }
-    .vocab-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
-    .vocab-btn.success { background: var(--success); border-color: var(--success); color: white; }
-    .vocab-btn.danger { background: var(--danger); border-color: var(--danger); color: white; }
+    .vocab-btn .icon { font-size: 16px; }
+    .vocab-btn.forgot { background: rgba(239,68,68,0.12); color: var(--danger); }
+    .vocab-btn.forgot:hover { background: rgba(239,68,68,0.25); }
+    .vocab-btn.hard { background: rgba(245,158,11,0.12); color: var(--warning); }
+    .vocab-btn.hard:hover { background: rgba(245,158,11,0.25); }
+    .vocab-btn.good { background: rgba(34,197,94,0.12); color: var(--success); }
+    .vocab-btn.good:hover { background: rgba(34,197,94,0.25); }
+    .vocab-btn.easy { background: rgba(59,130,246,0.12); color: var(--accent); }
+    .vocab-btn.easy:hover { background: rgba(59,130,246,0.25); }
+    
+    .vocab-btn-reveal {
+      width: 100%; padding: 10px;
+      background: var(--accent);
+      border: none; border-radius: 10px;
+      color: white; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .vocab-btn-reveal:hover { background: var(--accent-hover); }
+    
+    /* Complete state */
+    .vocab-complete { text-align: center; padding: 20px 10px; }
+    .vocab-complete-icon { font-size: 32px; margin-bottom: 8px; }
+    .vocab-complete-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--success); }
+    .vocab-complete-text { font-size: 12px; color: var(--text-secondary); }
+    
+    /* Header actions */
+    .vocab-header-actions { display: flex; gap: 4px; }
+    
+    /* Light theme */
+    [data-theme="light"] .vocab-flashcard { background: #fff; border-color: #eee; }
+    [data-theme="light"] .vocab-phonetic { background: #f3f4f6; }
+    [data-theme="light"] .vocab-streak-badge { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.05)); }
+
+    /* ========== Mobile Responsive ========== */
+    @media (max-width: 700px) {
+      .container { padding: 12px 14px; }
+      
+      /* Header mobile */
+      .header { flex-wrap: wrap; gap: 10px; }
+      .header-left { width: 100%; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+      .header-time { gap: 10px; }
+      .clock { font-size: 2rem; }
+      .greeting { font-size: 0.8rem; }
+      .date { font-size: 0.7rem; }
+      .header-weather { margin-left: 0; padding: 4px 10px; }
+      .hw-icon { font-size: 1rem; }
+      .hw-temp { font-size: 0.9rem; }
+      .hw-desc { font-size: 0.7rem; }
+      .header-right { width: 100%; justify-content: space-between; }
+      .search-box { flex: 1; }
+      .search-box input { width: 100%; }
+      .search-box input:focus { width: 100%; }
+      .header-actions { position: static; }
+      .icon-btn { width: 34px; height: 34px; }
+      
+      /* Quick links mobile */
+      .quick-links { padding: 10px 12px; gap: 6px; border-radius: 16px; }
+      .quick-link { padding: 6px 10px; font-size: 11px; border-radius: 16px; }
+      .quick-link img { width: 14px; height: 14px; }
+      .quick-link .key { display: none; }
+      .add-link-btn, .batch-link-btn { display: none; }
+      
+      /* Cards mobile */
+      .card { padding: 12px; border-radius: 14px; }
+      .card-header { margin-bottom: 8px; }
+      .card-title { font-size: 0.65rem; }
+      .card-action { width: 26px; height: 26px; }
+      
+      /* Countdown mobile */
+      .countdown-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .countdown-item { padding: 10px 6px; border-radius: 12px; }
+      .countdown-name { font-size: 11px; }
+      .countdown-days { font-size: 1.3rem; }
+      
+      /* Todo mobile */
+      .todo-tabs { padding: 3px; border-radius: 10px; }
+      .todo-tab { padding: 6px; font-size: 10px; border-radius: 8px; }
+      .todo-input { padding: 8px 12px; font-size: 12px; border-radius: 10px; }
+      .todo-add-btn { padding: 8px 14px; border-radius: 10px; }
+      .todo-item { padding: 8px 10px; border-radius: 10px; }
+      .todo-text { font-size: 12px; }
+      
+      /* Daily quote mobile */
+      .daily-quote { margin-bottom: 8px; }
+      .daily-quote .quote-text { font-size: 11px; }
+      .quote-actions { opacity: 1; }
+      
+      /* Vocab mobile */
+      .vocab-top-bar { margin-bottom: 8px; }
+      .vocab-streak-badge { padding: 3px 8px; font-size: 11px; border-radius: 12px; }
+      .vocab-streak-badge .fire { font-size: 12px; }
+      .vocab-xp-badge { padding: 3px 8px; font-size: 10px; border-radius: 12px; }
+      .vocab-progress-bar { height: 2px; margin-bottom: 10px; }
+      .vocab-flashcard { min-height: 100px; padding: 14px 12px; border-radius: 12px; }
+      .vocab-word { font-size: 1.3rem; }
+      .vocab-phonetic { font-size: 11px; padding: 2px 6px; border-radius: 10px; }
+      .vocab-phonetic .sound-icon { font-size: 10px; }
+      .vocab-meaning { font-size: 12px; }
+      .vocab-divider { width: 30px; margin: 8px 0; }
+      .vocab-example { font-size: 10px; padding: 6px 8px; border-radius: 6px; }
+      .vocab-synonyms span { padding: 2px 6px; font-size: 9px; border-radius: 8px; }
+      .vocab-counter { font-size: 9px; top: 6px; right: 8px; }
+      .vocab-mastery { top: 6px; left: 8px; gap: 2px; }
+      .vocab-mastery-dot { width: 5px; height: 5px; }
+      .vocab-tap-hint { font-size: 9px; bottom: 6px; }
+      .vocab-actions { gap: 6px; margin-top: 8px; }
+      .vocab-btn { padding: 6px 8px; min-width: 48px; border-radius: 8px; font-size: 9px; }
+      .vocab-btn .icon { font-size: 14px; }
+      .vocab-btn-reveal { padding: 8px; font-size: 11px; border-radius: 8px; }
+      .vocab-complete { padding: 16px 8px; }
+      .vocab-complete-icon { font-size: 28px; }
+      .vocab-complete-title { font-size: 14px; }
+      .vocab-complete-text { font-size: 11px; }
+      
+      /* Modal mobile */
+      .modal { margin: 16px; padding: 18px; border-radius: 18px; max-width: calc(100% - 32px); }
+      .modal-title { font-size: 0.9rem; }
+      .form-input { padding: 10px 14px; font-size: 13px; }
+      .btn { padding: 10px 16px; font-size: 12px; }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 380px) {
+      .container { padding: 10px 10px; }
+      .clock { font-size: 1.7rem; }
+      .header-time { gap: 8px; }
+      .quick-links { padding: 8px 10px; }
+      .quick-link { padding: 5px 8px; font-size: 10px; }
+      .countdown-list { grid-template-columns: 1fr 1fr; }
+      .vocab-btn { min-width: 42px; padding: 5px 6px; }
+      .vocab-btn .icon { font-size: 12px; }
+      .vocab-word { font-size: 1.2rem; }
+    }
+    
+    /* Mobile performance: reduce expensive effects */
+    @media (max-width: 700px) {
+      .card { backdrop-filter: blur(8px); }
+      .modal { backdrop-filter: blur(10px); }
+    }
+    
+    /* Safe area for notched phones */
+    @supports (padding: max(0px)) {
+      @media (max-width: 700px) {
+        .container { 
+          padding-left: max(14px, env(safe-area-inset-left));
+          padding-right: max(14px, env(safe-area-inset-right));
+          padding-bottom: max(16px, env(safe-area-inset-bottom));
+        }
+      }
+    }
+    
+    /* Touch-friendly minimum tap targets */
+    @media (pointer: coarse) {
+      .card-action { min-width: 44px; min-height: 44px; }
+      .icon-btn { min-width: 44px; min-height: 44px; }
+      .todo-checkbox { min-width: 20px; min-height: 20px; }
+      .vocab-btn { min-height: 44px; }
+      .vocab-btn-reveal { min-height: 44px; }
+    }
 
     /* Footer */
     .footer { display: none; }
@@ -442,31 +717,25 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
-    /* Weather Card */
-    .weather-main { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-    .weather-icon { font-size: 2.5rem; }
-    .weather-temp { font-size: 2rem; font-weight: 600; }
-    .weather-desc { font-size: 13px; color: var(--text-secondary); }
-    .weather-details { display: flex; gap: 12px; flex-wrap: wrap; }
-    .weather-detail { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
-    .weather-location { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-    .weather-loading { text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; }
-    .weather-error { text-align: center; padding: 16px; color: var(--text-muted); font-size: 12px; }
-    .weather-error button { margin-top: 8px; padding: 6px 12px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 11px; cursor: pointer; }
-
-    /* Quote Card */
-    .quote-content { font-size: 14px; font-style: italic; line-height: 1.6; margin-bottom: 10px; min-height: 60px; }
-    .quote-author { font-size: 12px; color: var(--text-secondary); text-align: right; }
-    .quote-author::before { content: '— '; }
-    .quote-refresh { margin-top: 10px; }
-
-    /* Joke Card */
-    .joke-content { font-size: 13px; line-height: 1.6; min-height: 80px; }
-    .joke-setup { margin-bottom: 8px; }
-    .joke-punchline { color: var(--accent); font-weight: 500; cursor: pointer; opacity: 0; transition: opacity 0.3s; }
-    .joke-punchline.show { opacity: 1; }
-    .joke-single { color: var(--text-primary); }
-    .joke-actions { display: flex; gap: 6px; margin-top: 10px; }
+    /* Daily Quote - minimal text line */
+    .daily-quote {
+      display: flex; align-items: center; gap: 6px;
+      margin: 0 0 8px 0; padding: 0;
+      background: none !important; border: none !important;
+    }
+    .daily-quote .quote-text { 
+      font-size: 11px; font-style: italic; color: var(--text-muted); 
+      flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      opacity: 0.6;
+    }
+    .quote-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.2s; }
+    .daily-quote:hover .quote-actions { opacity: 0.5; }
+    .quote-btn {
+      width: 16px; height: 16px; border-radius: 3px;
+      background: transparent; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 10px; transition: all 0.2s;
+    }
+    .quote-btn:hover { color: var(--text-primary); }
 
     /* Dictionary enhancement for vocab */
     .vocab-dict-btn { font-size: 11px; color: var(--accent); cursor: pointer; margin-left: 8px; }
@@ -495,70 +764,46 @@
             <span class="date" id="dateDisplay">2024年1月1日 星期一</span>
           </div>
         </div>
+        <!-- Weather in header -->
+        <div class="header-weather" id="headerWeather">
+          <span class="hw-icon">🌡️</span>
+          <span class="hw-temp">--°</span>
+          <span class="hw-desc">加载中</span>
+        </div>
+      </div>
+      <div class="header-right">
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
           <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
         </div>
-      </div>
-      <div class="header-actions">
-        <button class="icon-btn" id="settingsBtn" title="设置">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
-          </svg>
-        </button>
-        <button class="icon-btn" id="themeToggle" title="主题">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
-            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-          </svg>
-        </button>
+        <div class="header-actions">
+          <button class="icon-btn" id="settingsBtn" title="设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="themeToggle" title="主题">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
+
+    <!-- Daily Quote under header -->
+    <div class="daily-quote" id="dailyQuote">
+      <span id="quoteContent" class="quote-text">"加载中..."</span>
+      <span class="quote-actions">
+        <button class="quote-btn" id="toggleQuoteType" title="切换">↻</button>
+      </span>
+    </div>
 
     <nav class="quick-links" id="quickLinks"></nav>
 
     <main class="dashboard">
-      <!-- Weather Card -->
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">天气</span>
-          <button class="card-action" id="refreshWeatherBtn" title="刷新">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          </button>
-        </div>
-        <div id="weatherContent">
-          <div class="weather-loading">获取天气中...</div>
-        </div>
-      </section>
-
-      <!-- Quote Card -->
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">每日一言</span>
-          <button class="card-action" id="refreshQuoteBtn" title="换一条">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          </button>
-        </div>
-        <div id="quoteContent">
-          <div class="quote-content">加载中...</div>
-          <div class="quote-author"></div>
-        </div>
-      </section>
-
-      <!-- Joke Card -->
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">开心一刻</span>
-          <button class="card-action" id="refreshJokeBtn" title="换一个">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          </button>
-        </div>
-        <div id="jokeContent">
-          <div class="joke-content">加载中...</div>
-        </div>
-      </section>
-
       <section class="card">
         <div class="card-header">
           <span class="card-title">倒计时</span>
@@ -567,6 +812,79 @@
           </button>
         </div>
         <div class="countdown-list" id="countdownList"></div>
+      </section>
+
+      <section class="card vocab-card">
+        <div class="card-header">
+          <span class="card-title">单词学习</span>
+          <div class="vocab-header-actions">
+            <button class="card-action" id="fetchRandomWordBtn" title="随机新词">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button class="card-action" id="manageVocabBtn" title="管理词库">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 9l9-6 9 6M3 15l9 6 9-6"/></svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Top bar with streak and XP -->
+        <div class="vocab-top-bar">
+          <div class="vocab-streak-badge">
+            <span class="fire">🔥</span>
+            <span class="count" id="vocabStreak">0</span>
+            <span>天</span>
+          </div>
+          <div class="vocab-xp-badge">
+            <span>✨</span>
+            <span id="vocabTodayCount">0</span>
+            <span>/ 今日</span>
+          </div>
+        </div>
+        
+        <!-- Progress bar -->
+        <div class="vocab-progress-bar">
+          <div class="vocab-progress-fill" id="vocabProgressFill" style="width: 0%"></div>
+        </div>
+        
+        <!-- Main flashcard -->
+        <div class="vocab-flashcard" id="vocabFlashcard">
+          <!-- Mastery dots -->
+          <div class="vocab-mastery" id="vocabMastery">
+            <div class="vocab-mastery-dot"></div>
+            <div class="vocab-mastery-dot"></div>
+            <div class="vocab-mastery-dot"></div>
+            <div class="vocab-mastery-dot"></div>
+            <div class="vocab-mastery-dot"></div>
+          </div>
+          
+          <!-- Card counter -->
+          <div class="vocab-counter" id="vocabCounter">1 / 10</div>
+          
+          <!-- Word content -->
+          <div class="vocab-word" id="vocabWord">-</div>
+          <div class="vocab-phonetic" id="vocabPhonetic">
+            <span class="sound-icon">🔊</span>
+            <span class="text"></span>
+          </div>
+          
+          <div class="vocab-divider" id="vocabDivider"></div>
+          
+          <div class="vocab-meaning" id="vocabMeaning">点击卡片显示释义</div>
+          
+          <div class="vocab-extra" id="vocabExtra">
+            <div class="vocab-example" id="vocabExample"></div>
+            <div class="vocab-synonyms" id="vocabSynonyms"></div>
+          </div>
+          
+          <!-- Tap hint -->
+          <div class="vocab-tap-hint" id="vocabTapHint">
+            <span>👆</span>
+            <span>点击显示答案</span>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="vocab-actions" id="vocabActions"></div>
       </section>
 
       <section class="card">
@@ -586,26 +904,6 @@
           <button class="todo-add-btn" id="addTodoBtn">+</button>
         </div>
         <div class="todo-list" id="todoList"></div>
-      </section>
-
-      <section class="card">
-        <div class="card-header">
-          <span class="card-title">单词</span>
-          <button class="card-action" id="manageVocabBtn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 9l9-6 9 6M3 15l9 6 9-6"/></svg>
-          </button>
-        </div>
-        <div class="vocab-stats">
-          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabNew">0</div><div class="vocab-stat-label">新</div></div>
-          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabReview">0</div><div class="vocab-stat-label">复习</div></div>
-          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabMastered">0</div><div class="vocab-stat-label">掌握</div></div>
-        </div>
-        <div class="vocab-display" id="vocabDisplay">
-          <div class="vocab-word" id="vocabWord">-</div>
-          <div class="vocab-phonetic" id="vocabPhonetic"></div>
-          <div class="vocab-meaning" id="vocabMeaning">点击显示</div>
-        </div>
-        <div class="vocab-actions" id="vocabActions"></div>
       </section>
     </main>
 
@@ -811,7 +1109,7 @@
           { word: 'tokenization', phonetic: '/ˌtoʊkənaɪˈzeɪʃn/', meaning: '分词，标记化', interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null },
           { word: 'embedding', phonetic: '/ɪmˈbedɪŋ/', meaning: '嵌入，向量表示', interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null }
         ],
-        dailyNew: 5, todayLearned: []
+        dailyNew: 5, todayLearned: [], streak: 0, lastStudyDate: null, totalWordsLearned: 0
       }
     };
     let data = loadData();
@@ -955,40 +1253,141 @@
     function archiveTodos() { Object.keys(data.todos).forEach(t => data.todos[t] = data.todos[t].filter(x => !x.completed)); saveData(); renderTodos(); }
 
     // Vocab
-    let wordIdx = 0, showMeaning = false, words = [];
+    let wordIdx = 0, showMeaning = false, words = [], currentWordData = null, totalCards = 0, currentCard = 0;
     function getReview() { return data.vocab.words.filter(w => !w.nextReview || new Date(w.nextReview) <= new Date()); }
     function getNew() {
       const today = new Date().toDateString();
       if (data.vocab.todayDate !== today) { data.vocab.todayDate = today; data.vocab.todayLearned = []; saveData(); }
       return data.vocab.words.filter(w => !w.nextReview && !data.vocab.todayLearned.includes(w.word)).slice(0, data.vocab.dailyNew - data.vocab.todayLearned.length);
     }
-    function updateStats() { el('vocabNew').textContent = getNew().length; el('vocabReview').textContent = getReview().length; el('vocabMastered').textContent = data.vocab.words.filter(w => w.repetition >= 5).length; }
+    function updateStats() { 
+      el('vocabTodayCount').textContent = data.vocab.todayLearned ? data.vocab.todayLearned.length : 0;
+      el('vocabStreak').textContent = data.vocab.streak || 0;
+      // Update progress bar
+      const total = data.vocab.words.length;
+      const mastered = data.vocab.words.filter(w => w.repetition >= 5).length;
+      const progress = total > 0 ? (mastered / total) * 100 : 0;
+      el('vocabProgressFill').style.width = progress + '%';
+    }
+    function updateMasteryDots(repetition) {
+      const dots = document.querySelectorAll('.vocab-mastery-dot');
+      dots.forEach((dot, i) => {
+        dot.classList.remove('filled', 'current');
+        if (i < repetition) dot.classList.add('filled');
+        else if (i === repetition) dot.classList.add('current');
+      });
+    }
+    function updateStreak() {
+      const today = new Date().toDateString();
+      const lastDate = data.vocab.lastStudyDate;
+      if (lastDate !== today) {
+        const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if (lastDate === yesterday.toDateString()) {
+          data.vocab.streak = (data.vocab.streak || 0) + 1;
+        } else if (lastDate !== today) {
+          data.vocab.streak = 1;
+        }
+        data.vocab.lastStudyDate = today;
+        saveData();
+      }
+    }
     function vocabBtns(mode) {
       const c = el('vocabActions'); c.replaceChildren();
       if (mode === 'init') {
-        const show = ce('button', 'vocab-btn', '显示'); show.onclick = toggleMean;
-        const next = ce('button', 'vocab-btn primary', '下一个'); next.onclick = nextWord;
-        c.appendChild(show); c.appendChild(next);
+        const reveal = ce('button', 'vocab-btn-reveal', '');
+        reveal.innerHTML = '<span>👀</span><span>显示答案</span>';
+        reveal.onclick = toggleMean;
+        c.appendChild(reveal);
       } else {
-        const f = ce('button', 'vocab-btn danger', '忘了'); f.onclick = () => rate(1);
-        const m = ce('button', 'vocab-btn', '模糊'); m.onclick = () => rate(3);
-        const k = ce('button', 'vocab-btn success', '记住'); k.onclick = () => rate(5);
-        c.appendChild(f); c.appendChild(m); c.appendChild(k);
+        const btns = [
+          { cls: 'forgot', icon: '😕', text: '忘了', q: 1 },
+          { cls: 'hard', icon: '🤔', text: '模糊', q: 3 },
+          { cls: 'good', icon: '😊', text: '记住', q: 4 },
+          { cls: 'easy', icon: '🎯', text: '简单', q: 5 }
+        ];
+        btns.forEach(b => {
+          const btn = ce('button', 'vocab-btn ' + b.cls);
+          btn.innerHTML = '<span class="icon">' + b.icon + '</span><span>' + b.text + '</span>';
+          btn.onclick = () => rate(b.q);
+          c.appendChild(btn);
+        });
       }
     }
     function nextWord() {
       words = [...getReview(), ...getNew()];
-      if (!words.length) { el('vocabWord').textContent = '完成!'; el('vocabPhonetic').textContent = ''; el('vocabMeaning').textContent = '明天继续'; el('vocabMeaning').classList.add('show'); el('vocabActions').replaceChildren(); return; }
+      totalCards = words.length;
+      
+      // Clear previous data
+      el('vocabExample').textContent = '';
+      el('vocabSynonyms').innerHTML = '';
+      el('vocabDivider').classList.remove('show');
+      el('vocabExtra').classList.remove('show');
+      el('vocabTapHint').classList.remove('hidden');
+      currentWordData = null;
+      
+      if (!words.length) { 
+        // Show complete state
+        const flashcard = el('vocabFlashcard');
+        flashcard.innerHTML = '<div class="vocab-complete"><div class="vocab-complete-icon">🎉</div><div class="vocab-complete-title">今日完成!</div><div class="vocab-complete-text">明天继续保持学习哦</div></div>';
+        el('vocabActions').replaceChildren();
+        el('vocabCounter').textContent = '完成';
+        return; 
+      }
+      
       wordIdx = Math.floor(Math.random() * words.length);
-      const w = words[wordIdx]; el('vocabWord').textContent = w.word; el('vocabPhonetic').textContent = w.phonetic || ''; el('vocabMeaning').textContent = w.meaning; el('vocabMeaning').classList.remove('show'); showMeaning = false; vocabBtns('init');
+      currentCard++;
+      const w = words[wordIdx]; 
+      currentWordData = w;
+      
+      el('vocabWord').textContent = w.word; 
+      const phoneticEl = el('vocabPhonetic');
+      phoneticEl.querySelector('.text').textContent = w.phonetic || '';
+      phoneticEl.style.display = w.phonetic ? 'inline-flex' : 'none';
+      
+      el('vocabMeaning').textContent = w.meaning; 
+      el('vocabMeaning').classList.remove('show'); 
+      showMeaning = false; 
+      
+      // Update counter
+      el('vocabCounter').textContent = currentCard + ' / ' + (currentCard + words.length - 1);
+      
+      // Update mastery dots
+      updateMasteryDots(w.repetition || 0);
+      
+      vocabBtns('init');
+      
+      // Fetch synonyms in background
+      fetchSynonyms(w.word);
     }
-    function toggleMean() { showMeaning = !showMeaning; el('vocabMeaning').classList.toggle('show', showMeaning); if (showMeaning) vocabBtns('rate'); }
+    function toggleMean() { 
+      showMeaning = !showMeaning; 
+      el('vocabMeaning').classList.toggle('show', showMeaning); 
+      el('vocabDivider').classList.toggle('show', showMeaning);
+      el('vocabExtra').classList.toggle('show', showMeaning);
+      el('vocabTapHint').classList.toggle('hidden', showMeaning);
+      
+      if (showMeaning) {
+        vocabBtns('rate');
+        // Fetch example sentence if not already fetched
+        if (currentWordData && !el('vocabExample').textContent) {
+          fetchExample(currentWordData.word);
+        }
+      }
+    }
     function rate(q) {
       const w = words[wordIdx]; if (!w) return;
-      if (q < 3) { w.repetition = 0; w.interval = 1; } else { w.interval = w.repetition === 0 ? 1 : w.repetition === 1 ? 6 : Math.round(w.interval * w.easeFactor); w.repetition++; }
+      updateStreak();
+      if (q < 3) { w.repetition = 0; w.interval = 1; } 
+      else { 
+        w.interval = w.repetition === 0 ? 1 : w.repetition === 1 ? 6 : Math.round(w.interval * w.easeFactor); 
+        w.repetition++; 
+      }
       w.easeFactor = Math.max(1.3, w.easeFactor + (0.1 - (5-q)*(0.08+(5-q)*0.02)));
       const nr = new Date(); nr.setDate(nr.getDate() + w.interval); w.nextReview = nr.toISOString();
-      if (!data.vocab.todayLearned.includes(w.word)) data.vocab.todayLearned.push(w.word);
+      if (!data.vocab.todayLearned.includes(w.word)) {
+        data.vocab.todayLearned.push(w.word);
+        data.vocab.totalWordsLearned = (data.vocab.totalWordsLearned || 0) + 1;
+      }
       saveData(); updateStats(); nextWord();
     }
     function addVocab() {
@@ -998,6 +1397,107 @@
         if (p.length >= 2 && !data.vocab.words.find(w => w.word === p[0])) data.vocab.words.push({ word: p[0], phonetic: p[1] || '', meaning: p[2] || p[1], interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null });
       });
       saveData(); updateStats(); nextWord(); closeModal('vocabModal'); el('vocabInput').value = '';
+    }
+    
+    // Datamuse API - fetch synonyms
+    async function fetchSynonyms(word) {
+      try {
+        const res = await fetch('https://api.datamuse.com/words?rel_syn=' + encodeURIComponent(word) + '&max=5');
+        if (!res.ok) return;
+        const synonyms = await res.json();
+        if (synonyms.length > 0) {
+          const container = el('vocabSynonyms');
+          container.innerHTML = '';
+          synonyms.forEach(s => {
+            const span = ce('span', '', s.word);
+            container.appendChild(span);
+          });
+        }
+      } catch (err) {
+        console.log('Synonyms fetch failed:', err);
+      }
+    }
+    
+    // Fetch example sentence from Free Dictionary API
+    async function fetchExample(word) {
+      try {
+        const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data[0] && data[0].meanings) {
+          for (const meaning of data[0].meanings) {
+            for (const def of meaning.definitions) {
+              if (def.example) {
+                el('vocabExample').textContent = '"' + def.example + '"';
+                return;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.log('Example fetch failed:', err);
+      }
+    }
+    
+    // Random Word API - fetch new random words
+    async function fetchRandomWord() {
+      const btn = el('fetchRandomWordBtn');
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      
+      try {
+        // Use Random Word API
+        const res = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+        if (!res.ok) throw new Error('API error');
+        const words = await res.json();
+        const randomWord = words[0];
+        
+        // Now look up the definition
+        const dictRes = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(randomWord));
+        if (!dictRes.ok) {
+          // Try another word if this one has no definition
+          return fetchRandomWord();
+        }
+        const dictData = await dictRes.json();
+        const entry = dictData[0];
+        
+        // Extract info
+        const phonetic = entry.phonetic || (entry.phonetics && entry.phonetics[0] ? entry.phonetics[0].text : '');
+        let meaning = '';
+        if (entry.meanings && entry.meanings[0] && entry.meanings[0].definitions && entry.meanings[0].definitions[0]) {
+          meaning = entry.meanings[0].partOfSpeech + ': ' + entry.meanings[0].definitions[0].definition;
+        }
+        
+        // Check if word already exists
+        if (data.vocab.words.find(w => w.word.toLowerCase() === randomWord.toLowerCase())) {
+          alert('词库中已有此单词: ' + randomWord);
+          return;
+        }
+        
+        // Add to vocab
+        data.vocab.words.push({
+          word: randomWord,
+          phonetic: phonetic,
+          meaning: meaning || 'No definition found',
+          interval: 1,
+          repetition: 0,
+          easeFactor: 2.5,
+          nextReview: null
+        });
+        saveData();
+        updateStats();
+        
+        // Show the new word
+        alert('已添加新单词: ' + randomWord);
+        nextWord();
+        
+      } catch (err) {
+        console.error('Random word error:', err);
+        alert('获取随机单词失败，请重试');
+      } finally {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
     }
 
     // Modal
@@ -1106,10 +1606,12 @@
     el('addTodoBtn').onclick = addTodo;
     el('archiveTodosBtn').onclick = archiveTodos;
     el('manageVocabBtn').onclick = () => openModal('vocabModal');
+    el('fetchRandomWordBtn').onclick = fetchRandomWord;
+    el('vocabFlashcard').onclick = (e) => { if (!showMeaning && words.length && !e.target.closest('.vocab-phonetic')) toggleMean(); };
+    el('vocabPhonetic').onclick = playPronunciation;
     el('saveVocabBtn').onclick = addVocab;
     el('closeVocabModal').onclick = () => closeModal('vocabModal');
     el('cancelVocabBtn').onclick = () => closeModal('vocabModal');
-    el('vocabDisplay').onclick = () => { if (!showMeaning && words.length) toggleMean(); };
     el('settingsBtn').onclick = () => openModal('settingsModal');
     el('closeSettingsModal').onclick = () => closeModal('settingsModal');
     document.querySelectorAll('.bg-option').forEach(o => o.onclick = () => {
@@ -1142,74 +1644,155 @@
     // ========== API Features ==========
 
     // Weather API (wttr.in - free, no key needed)
-    const weatherCodeIcons = {
-      '113': '☀️', '116': '⛅', '119': '☁️', '122': '☁️', '143': '🌫️',
-      '176': '🌦️', '179': '🌨️', '182': '🌨️', '185': '🌨️', '200': '⛈️',
-      '227': '❄️', '230': '❄️', '248': '🌫️', '260': '🌫️', '263': '🌦️',
-      '266': '🌦️', '281': '🌨️', '284': '🌨️', '293': '🌦️', '296': '🌧️',
-      '299': '🌧️', '302': '🌧️', '305': '🌧️', '308': '🌧️', '311': '🌨️',
-      '314': '🌨️', '317': '🌨️', '320': '🌨️', '323': '🌨️', '326': '🌨️',
-      '329': '❄️', '332': '❄️', '335': '❄️', '338': '❄️', '350': '🌨️',
-      '353': '🌦️', '356': '🌧️', '359': '🌧️', '362': '🌨️', '365': '🌨️',
-      '368': '🌨️', '371': '❄️', '374': '🌨️', '377': '🌨️', '386': '⛈️',
-      '389': '⛈️', '392': '⛈️', '395': '❄️'
+    // WMO Weather codes for Open-Meteo
+    const wmoWeatherCodes = {
+      0: { icon: '☀️', desc: '晴' },
+      1: { icon: '🌤️', desc: '大部晴朗' },
+      2: { icon: '⛅', desc: '多云' },
+      3: { icon: '☁️', desc: '阴' },
+      45: { icon: '🌫️', desc: '雾' },
+      48: { icon: '🌫️', desc: '冻雾' },
+      51: { icon: '🌦️', desc: '小毛毛雨' },
+      53: { icon: '🌦️', desc: '毛毛雨' },
+      55: { icon: '🌧️', desc: '大毛毛雨' },
+      61: { icon: '🌧️', desc: '小雨' },
+      63: { icon: '🌧️', desc: '中雨' },
+      65: { icon: '🌧️', desc: '大雨' },
+      66: { icon: '🌨️', desc: '冻小雨' },
+      67: { icon: '🌨️', desc: '冻大雨' },
+      71: { icon: '🌨️', desc: '小雪' },
+      73: { icon: '🌨️', desc: '中雪' },
+      75: { icon: '❄️', desc: '大雪' },
+      77: { icon: '🌨️', desc: '雪粒' },
+      80: { icon: '🌦️', desc: '小阵雨' },
+      81: { icon: '🌧️', desc: '阵雨' },
+      82: { icon: '🌧️', desc: '大阵雨' },
+      85: { icon: '🌨️', desc: '小阵雪' },
+      86: { icon: '❄️', desc: '大阵雪' },
+      95: { icon: '⛈️', desc: '雷暴' },
+      96: { icon: '⛈️', desc: '雷暴伴小冰雹' },
+      99: { icon: '⛈️', desc: '雷暴伴冰雹' }
     };
 
-    async function fetchWeather() {
-      const content = el('weatherContent');
-      content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
+    // Cache helper functions
+    const CACHE_KEYS = {
+      weather: 'cache_weather',
+      quote: 'cache_quote',
+      joke: 'cache_joke'
+    };
+    const CACHE_DURATION = {
+      weather: 30 * 60 * 1000,  // 30 minutes
+      quote: 60 * 60 * 1000,    // 1 hour
+      joke: 60 * 60 * 1000      // 1 hour
+    };
+    
+    function getCache(key) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+        const { data, timestamp } = JSON.parse(cached);
+        const duration = CACHE_DURATION[key.replace('cache_', '')] || 30 * 60 * 1000;
+        if (Date.now() - timestamp > duration) {
+          localStorage.removeItem(key);
+          return null;
+        }
+        return data;
+      } catch { return null; }
+    }
+    
+    function setCache(key, data) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+      } catch (e) { console.log('Cache write failed:', e); }
+    }
+
+    async function fetchWeather(forceRefresh = false) {
+      const hw = el('headerWeather');
+      
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = getCache(CACHE_KEYS.weather);
+        if (cached) {
+          renderWeather(cached);
+          return;
+        }
+      }
+      
+      hw.innerHTML = '<span class="hw-icon">🌡️</span><span class="hw-desc">获取中...</span>';
 
       try {
-        const res = await fetch('https://wttr.in/?format=j1');
+        // Get user location
+        const pos = await new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error('Geolocation not supported'));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+        });
+        
+        const { latitude, longitude } = pos.coords;
+        
+        // Fetch weather from Open-Meteo
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,wind_speed_10m&timezone=auto`;
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
         if (!res.ok) throw new Error('API error');
-        const w = await res.json();
+        const data = await res.json();
         
-        const current = w.current_condition[0];
-        const area = w.nearest_area[0];
-        const location = area.areaName[0].value + ', ' + area.country[0].value;
-        const weatherCode = current.weatherCode;
-        const icon = weatherCodeIcons[weatherCode] || '🌡️';
-        const desc = current.lang_zh && current.lang_zh[0] ? current.lang_zh[0].value : current.weatherDesc[0].value;
-
-        content.replaceChildren();
+        // Get location name via reverse geocoding
+        let locationName = `${latitude.toFixed(1)}, ${longitude.toFixed(1)}`;
+        try {
+          const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=zh`, { signal: AbortSignal.timeout(5000) });
+          if (geoRes.ok) {
+            const geo = await geoRes.json();
+            locationName = geo.address?.city || geo.address?.town || geo.address?.county || locationName;
+          }
+        } catch {}
         
-        // Location
-        const locDiv = ce('div', 'weather-location');
-        locDiv.textContent = '📍 ' + location;
-        content.appendChild(locDiv);
-        
-        // Main weather
-        const mainDiv = ce('div', 'weather-main');
-        const iconSpan = ce('span', 'weather-icon', icon);
-        const infoDiv = ce('div');
-        const tempDiv = ce('div', 'weather-temp', current.temp_C + '°C');
-        const descDiv = ce('div', 'weather-desc', desc);
-        infoDiv.appendChild(tempDiv);
-        infoDiv.appendChild(descDiv);
-        mainDiv.appendChild(iconSpan);
-        mainDiv.appendChild(infoDiv);
-        content.appendChild(mainDiv);
-        
-        // Details
-        const detailsDiv = ce('div', 'weather-details');
-        detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + current.humidity + '%'));
-        detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + current.windspeedKmph + 'km/h'));
-        detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + current.FeelsLikeC + '°C 体感'));
-        content.appendChild(detailsDiv);
+        const weatherData = { ...data, locationName };
+        setCache(CACHE_KEYS.weather, weatherData);
+        renderWeather(weatherData);
         
       } catch (err) {
         console.error('Weather error:', err);
-        content.replaceChildren();
-        const errDiv = ce('div', 'weather-error', '获取天气失败');
-        const retryBtn = ce('button', '', '重试');
-        retryBtn.onclick = fetchWeather;
-        errDiv.appendChild(retryBtn);
-        content.appendChild(errDiv);
+        // Fallback: use default location (Shanghai)
+        try {
+          const url = 'https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m,wind_speed_10m&timezone=auto';
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            const weatherData = { ...data, locationName: '上海' };
+            setCache(CACHE_KEYS.weather, weatherData);
+            renderWeather(weatherData);
+            return;
+          }
+        } catch {}
+        
+        hw.innerHTML = '<span class="hw-icon">❌</span><span class="hw-desc">获取失败</span>';
+        hw.onclick = () => fetchWeather(true);
       }
+    }
+    
+    function renderWeather(w) {
+      const hw = el('headerWeather');
+      const current = w.current;
+      const weatherCode = current.weather_code;
+      const weather = wmoWeatherCodes[weatherCode] || { icon: '🌡️', desc: '未知' };
+      
+      hw.innerHTML = `
+        <span class="hw-icon">${weather.icon}</span>
+        <span class="hw-temp">${Math.round(current.temperature_2m)}°</span>
+        <span class="hw-desc">${weather.desc}</span>
+        <span class="hw-location">📍${w.locationName}</span>
+      `;
+      hw.title = `${w.locationName}\n体感 ${Math.round(current.apparent_temperature)}°C\n湿度 ${current.relative_humidity_2m}%\n风速 ${Math.round(current.wind_speed_10m)}km/h\n点击刷新`;
+      hw.onclick = () => fetchWeather(true);
     }
 
     // Quote API (Quotable - free, no key needed)
-    async function fetchQuote() {
+    async function fetchQuote(forceRefresh = false) {
       const content = el('quoteContent');
       const fallbackQuotes = [
         { content: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' },
@@ -1222,31 +1805,48 @@
         { content: 'Life is what happens when you are busy making other plans.', author: 'John Lennon' }
       ];
       
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = getCache(CACHE_KEYS.quote);
+        if (cached) {
+          renderQuote(cached);
+          return;
+        }
+      }
+      
       try {
-        const res = await fetch('https://api.quotable.io/random?maxLength=150');
+        const res = await fetch('https://api.quotable.io/random?maxLength=100');
         if (!res.ok) throw new Error('API error');
         const q = await res.json();
         
-        content.replaceChildren();
-        const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
-        const authorDiv = ce('div', 'quote-author', q.author);
-        content.appendChild(quoteDiv);
-        content.appendChild(authorDiv);
+        setCache(CACHE_KEYS.quote, q);
+        renderQuote(q);
       } catch (err) {
         // Fallback to local quotes if API fails
         const q = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
-        content.replaceChildren();
-        const quoteDiv = ce('div', 'quote-content', '"' + q.content + '"');
-        const authorDiv = ce('div', 'quote-author', q.author);
-        content.appendChild(quoteDiv);
-        content.appendChild(authorDiv);
+        renderQuote(q);
+      }
+    }
+    
+    let quoteMode = 'quote'; // 'quote' or 'joke'
+    
+    function renderQuote(q) {
+      const content = el('quoteContent');
+      content.innerHTML = `"${q.content}" — ${q.author}`;
+    }
+    
+    function renderJokeInline(j) {
+      const content = el('quoteContent');
+      if (j.type === 'twopart') {
+        content.innerHTML = `${j.setup} <span style="color:var(--accent);cursor:pointer" onclick="this.textContent='${j.delivery.replace(/'/g, "\\'")}'">[点击揭晓]</span>`;
+      } else {
+        content.textContent = j.joke;
       }
     }
 
     // Joke API (JokeAPI - free, no key needed)
     let currentJokePunchline = '';
-    async function fetchJoke() {
-      const content = el('jokeContent');
+    async function fetchJoke(forceRefresh = false) {
       const fallbackJokes = [
         { setup: 'Why do programmers prefer dark mode?', delivery: 'Because light attracts bugs!' },
         { setup: 'Why do Java developers wear glasses?', delivery: "Because they don't C#!" },
@@ -1255,55 +1855,40 @@
         { setup: "What's a programmer's favorite hangout place?", delivery: 'Foo Bar!' }
       ];
       
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = getCache(CACHE_KEYS.joke);
+        if (cached) {
+          renderJokeInline(cached);
+          return;
+        }
+      }
+      
       try {
         const res = await fetch('https://v2.jokeapi.dev/joke/Programming,Misc,Pun?blacklistFlags=nsfw,religious,political,racist,sexist&type=twopart,single');
         if (!res.ok) throw new Error('API error');
         const j = await res.json();
         
-        content.replaceChildren();
-        const jokeDiv = ce('div', 'joke-content');
-        
-        if (j.type === 'twopart') {
-          currentJokePunchline = j.delivery;
-          const setupDiv = ce('div', 'joke-setup', j.setup);
-          const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
-          punchDiv.id = 'jokePunchline';
-          punchDiv.onclick = showPunchline;
-          jokeDiv.appendChild(setupDiv);
-          jokeDiv.appendChild(punchDiv);
-        } else {
-          const singleDiv = ce('div', 'joke-single', j.joke);
-          jokeDiv.appendChild(singleDiv);
-        }
-        content.appendChild(jokeDiv);
+        setCache(CACHE_KEYS.joke, j);
+        renderJokeInline(j);
       } catch (err) {
         // Fallback jokes
         const j = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
+        renderJokeInline({ type: 'twopart', setup: j.setup, delivery: j.delivery });
+      }
+    }
+    
+    function renderJoke(j) {
+      const content = el('jokeContent');
+      if (j.type === 'twopart') {
         currentJokePunchline = j.delivery;
-        
-        content.replaceChildren();
-        const jokeDiv = ce('div', 'joke-content');
-        const setupDiv = ce('div', 'joke-setup', j.setup);
-        const punchDiv = ce('div', 'joke-punchline', '点击揭晓答案...');
-        punchDiv.id = 'jokePunchline';
-        punchDiv.onclick = showPunchline;
-        jokeDiv.appendChild(setupDiv);
-        jokeDiv.appendChild(punchDiv);
-        content.appendChild(jokeDiv);
+        content.innerHTML = `<span class="joke-text">${j.setup} <span class="joke-punchline" onclick="this.textContent='${j.delivery.replace(/'/g, "\\'")}'; this.classList.add('show');">点击揭晓...</span></span>`;
+      } else {
+        content.innerHTML = `<span class="joke-text">${j.joke}</span>`;
       }
     }
 
-    function showPunchline() {
-      const pl = el('jokePunchline');
-      if (pl && currentJokePunchline) {
-        pl.textContent = currentJokePunchline;
-        pl.classList.add('show');
-        pl.style.cursor = 'default';
-        pl.onclick = null;
-      }
-    }
-
-    // Free Dictionary API - enhance vocab card
+    // Free Dictionary API - enhance vocab card with audio playback
     async function lookupWord(word) {
       try {
         const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
@@ -1315,82 +1900,50 @@
       }
     }
 
-    // Add dictionary lookup button to vocab display
-    const originalNextWord = nextWord;
-    nextWord = function() {
-      originalNextWord();
-      // Add lookup button after word is displayed
-      const wordEl = el('vocabWord');
-      const word = wordEl.textContent;
-      if (word && word !== '-' && word !== '完成!') {
-        const existingBtn = document.querySelector('.vocab-dict-btn');
-        if (existingBtn) existingBtn.remove();
-        
-        const btn = ce('span', 'vocab-dict-btn', '📖 查词典');
-        btn.onclick = async (e) => {
-          e.stopPropagation();
-          btn.textContent = '查询中...';
-          const dictData = await lookupWord(word);
-          if (dictData) {
-            showDictResult(dictData);
-          } else {
-            btn.textContent = '未找到';
-            setTimeout(() => { btn.textContent = '📖 查词典'; }, 2000);
-          }
-        };
-        wordEl.appendChild(btn);
-      }
-    };
-
-    function showDictResult(data) {
-      const existing = document.querySelector('.dict-result');
-      if (existing) existing.remove();
+    // Play pronunciation audio
+    async function playPronunciation(e) {
+      e.stopPropagation();
+      const word = el('vocabWord').textContent;
+      if (!word || word === '-') return;
       
-      const display = el('vocabDisplay');
-      const result = ce('div', 'dict-result');
+      const phoneticEl = el('vocabPhonetic');
+      phoneticEl.style.transform = 'scale(0.95)';
+      setTimeout(() => phoneticEl.style.transform = '', 150);
       
-      // Phonetics with audio
-      const phoneticsDiv = ce('div', 'dict-phonetics');
-      if (data.phonetics) {
-        data.phonetics.forEach(p => {
-          if (p.text) {
-            const phoneticSpan = ce('span', 'dict-phonetic', p.text + (p.audio ? ' 🔊' : ''));
+      try {
+        const dictData = await lookupWord(word);
+        if (dictData && dictData.phonetics) {
+          for (const p of dictData.phonetics) {
             if (p.audio) {
-              phoneticSpan.onclick = () => new Audio(p.audio).play();
+              new Audio(p.audio).play();
+              return;
             }
-            phoneticsDiv.appendChild(phoneticSpan);
           }
-        });
+        }
+        // Fallback: use browser TTS
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(word);
+          utterance.lang = 'en-US';
+          speechSynthesis.speak(utterance);
+        }
+      } catch (err) {
+        console.log('Audio playback failed:', err);
       }
-      result.appendChild(phoneticsDiv);
-      
-      // Meanings
-      const meaningsDiv = ce('div', 'dict-meanings');
-      if (data.meanings) {
-        data.meanings.slice(0, 3).forEach(m => {
-          const meaningDiv = ce('div', 'dict-meaning');
-          const posSpan = ce('span', 'dict-pos', m.partOfSpeech);
-          meaningDiv.appendChild(posSpan);
-          if (m.definitions && m.definitions[0]) {
-            meaningDiv.appendChild(document.createTextNode(m.definitions[0].definition));
-          }
-          meaningsDiv.appendChild(meaningDiv);
-        });
-      }
-      result.appendChild(meaningsDiv);
-      
-      display.appendChild(result);
     }
 
-    // Event listeners for new features
-    el('refreshWeatherBtn').onclick = fetchWeather;
-    el('refreshQuoteBtn').onclick = fetchQuote;
-    el('refreshJokeBtn').onclick = () => { currentJokePunchline = ''; fetchJoke(); };
+    // Event listeners - Quote toggle
+    el('toggleQuoteType').onclick = () => {
+      quoteMode = quoteMode === 'quote' ? 'joke' : 'quote';
+      if (quoteMode === 'quote') {
+        fetchQuote(true);
+      } else {
+        fetchJoke(true);
+      }
+    };
 
     // Initialize API features
     fetchWeather();
     fetchQuote();
-    fetchJoke();
   </script>
 </body>
 </html>

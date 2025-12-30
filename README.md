@@ -4,7 +4,7 @@ A minimal, privacy-first personal start page with glassmorphism design.
 
 | Dark | Light |
 |------|-------|
-| ![Dark](preview.png) | ![Light](preview-light.png) |
+| ![Dark](screenshots/layout-dark.png) | ![Light](screenshots/layout-light.png) |
 
 ## Features
 

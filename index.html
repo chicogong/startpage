@@ -317,31 +317,63 @@
     .todo-action-btn { width: 20px; height: 20px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; }
     .todo-action-btn:hover { color: var(--danger); }
 
-    /* Vocab */
-    .vocab-stats { display: flex; gap: 8px; margin-bottom: 10px; }
-    .vocab-stat { flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; }
-    .vocab-stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+    /* Vocab - Enhanced */
+    .vocab-card { grid-column: span 1; }
+    @media (min-width: 1100px) { .vocab-card { grid-column: span 2; } }
+    .vocab-header-actions { display: flex; gap: 4px; }
+    .vocab-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+    .vocab-stat { text-align: center; padding: 10px 6px; background: rgba(255,255,255,0.03); border-radius: 12px; }
+    .vocab-stat-value { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
     .vocab-stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
+    .vocab-stat.highlight { background: rgba(59, 130, 246, 0.1); }
+    .vocab-stat.highlight .vocab-stat-value { color: var(--success); }
+    
+    .vocab-main { display: flex; gap: 16px; }
     .vocab-display {
-      padding: 20px; background: rgba(255,255,255,0.03);
+      flex: 1; padding: 24px; background: rgba(255,255,255,0.03);
       border-radius: 16px; text-align: center;
-      margin-bottom: 10px; cursor: pointer; min-height: 90px;
-      display: flex; flex-direction: column; justify-content: center;
+      min-height: 140px; display: flex; flex-direction: column; justify-content: center;
+      cursor: pointer; position: relative;
     }
-    .vocab-word { font-size: 1.4rem; font-weight: 600; margin-bottom: 2px; }
-    .vocab-phonetic { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-    .vocab-meaning { font-size: 13px; color: var(--text-secondary); opacity: 0; transition: opacity 0.2s; }
+    .vocab-word { font-size: 1.8rem; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .vocab-phonetic { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; cursor: pointer; }
+    .vocab-phonetic:hover { color: var(--accent); }
+    .vocab-meaning { font-size: 14px; color: var(--text-secondary); opacity: 0; transition: opacity 0.2s; margin-bottom: 8px; }
     .vocab-meaning.show { opacity: 1; }
-    .vocab-actions { display: flex; gap: 6px; }
+    .vocab-example { font-size: 12px; color: var(--text-muted); font-style: italic; opacity: 0; transition: opacity 0.2s; margin-top: 8px; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 2px solid var(--accent); text-align: left; }
+    .vocab-example.show { opacity: 1; }
+    .vocab-synonyms { font-size: 11px; color: var(--text-muted); margin-top: 8px; opacity: 0; transition: opacity 0.2s; }
+    .vocab-synonyms.show { opacity: 1; }
+    .vocab-synonyms span { display: inline-block; padding: 2px 8px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 2px; }
+    .vocab-progress { position: absolute; bottom: 8px; right: 8px; font-size: 10px; color: var(--text-muted); }
+    
+    .vocab-sidebar { width: 140px; display: flex; flex-direction: column; gap: 8px; }
+    .vocab-actions { display: flex; flex-direction: column; gap: 6px; }
     .vocab-btn {
-      flex: 1; padding: 10px; border: 1px solid var(--glass-border);
+      padding: 12px; border: 1px solid var(--glass-border);
       border-radius: 12px; background: transparent;
       color: var(--text-primary); font-size: 12px; cursor: pointer;
+      transition: all 0.2s; text-align: center;
     }
     .vocab-btn:hover { background: rgba(255,255,255,0.08); }
     .vocab-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
     .vocab-btn.success { background: var(--success); border-color: var(--success); color: white; }
     .vocab-btn.danger { background: var(--danger); border-color: var(--danger); color: white; }
+    .vocab-btn.warning { background: var(--warning); border-color: var(--warning); color: white; }
+    .vocab-btn-small { padding: 8px 12px; font-size: 11px; }
+    
+    .vocab-streak { text-align: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-top: auto; }
+    .vocab-streak-icon { font-size: 1.5rem; }
+    .vocab-streak-count { font-size: 1.1rem; font-weight: 700; color: var(--warning); }
+    .vocab-streak-label { font-size: 9px; color: var(--text-muted); }
+    
+    @media (max-width: 700px) {
+      .vocab-main { flex-direction: column; }
+      .vocab-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+      .vocab-actions { flex-direction: row; flex: 1; }
+      .vocab-btn { flex: 1; }
+      .vocab-streak { flex: none; width: auto; padding: 8px 16px; }
+    }
 
     /* Footer */
     .footer { display: none; }
@@ -588,24 +620,42 @@
         <div class="todo-list" id="todoList"></div>
       </section>
 
-      <section class="card">
+      <section class="card vocab-card">
         <div class="card-header">
-          <span class="card-title">单词</span>
-          <button class="card-action" id="manageVocabBtn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 9l9-6 9 6M3 15l9 6 9-6"/></svg>
-          </button>
+          <span class="card-title">单词学习</span>
+          <div class="vocab-header-actions">
+            <button class="card-action" id="fetchRandomWordBtn" title="随机新词">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            </button>
+            <button class="card-action" id="manageVocabBtn" title="管理词库">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 9l9-6 9 6M3 15l9 6 9-6"/></svg>
+            </button>
+          </div>
         </div>
         <div class="vocab-stats">
-          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabNew">0</div><div class="vocab-stat-label">新</div></div>
+          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabTodayCount">0</div><div class="vocab-stat-label">今日</div></div>
+          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabNew">0</div><div class="vocab-stat-label">新词</div></div>
           <div class="vocab-stat"><div class="vocab-stat-value" id="vocabReview">0</div><div class="vocab-stat-label">复习</div></div>
-          <div class="vocab-stat"><div class="vocab-stat-value" id="vocabMastered">0</div><div class="vocab-stat-label">掌握</div></div>
+          <div class="vocab-stat highlight"><div class="vocab-stat-value" id="vocabMastered">0</div><div class="vocab-stat-label">掌握</div></div>
         </div>
-        <div class="vocab-display" id="vocabDisplay">
-          <div class="vocab-word" id="vocabWord">-</div>
-          <div class="vocab-phonetic" id="vocabPhonetic"></div>
-          <div class="vocab-meaning" id="vocabMeaning">点击显示</div>
+        <div class="vocab-main">
+          <div class="vocab-display" id="vocabDisplay">
+            <div class="vocab-word" id="vocabWord">-</div>
+            <div class="vocab-phonetic" id="vocabPhonetic"></div>
+            <div class="vocab-meaning" id="vocabMeaning">点击显示</div>
+            <div class="vocab-example" id="vocabExample"></div>
+            <div class="vocab-synonyms" id="vocabSynonyms"></div>
+            <div class="vocab-progress" id="vocabProgress"></div>
+          </div>
+          <div class="vocab-sidebar">
+            <div class="vocab-actions" id="vocabActions"></div>
+            <div class="vocab-streak">
+              <div class="vocab-streak-icon">🔥</div>
+              <div class="vocab-streak-count" id="vocabStreak">0</div>
+              <div class="vocab-streak-label">天连续</div>
+            </div>
+          </div>
         </div>
-        <div class="vocab-actions" id="vocabActions"></div>
       </section>
     </main>
 
@@ -811,7 +861,7 @@
           { word: 'tokenization', phonetic: '/ˌtoʊkənaɪˈzeɪʃn/', meaning: '分词，标记化', interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null },
           { word: 'embedding', phonetic: '/ɪmˈbedɪŋ/', meaning: '嵌入，向量表示', interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null }
         ],
-        dailyNew: 5, todayLearned: []
+        dailyNew: 5, todayLearned: [], streak: 0, lastStudyDate: null, totalWordsLearned: 0
       }
     };
     let data = loadData();
@@ -955,40 +1005,105 @@
     function archiveTodos() { Object.keys(data.todos).forEach(t => data.todos[t] = data.todos[t].filter(x => !x.completed)); saveData(); renderTodos(); }
 
     // Vocab
-    let wordIdx = 0, showMeaning = false, words = [];
+    let wordIdx = 0, showMeaning = false, words = [], currentWordData = null;
     function getReview() { return data.vocab.words.filter(w => !w.nextReview || new Date(w.nextReview) <= new Date()); }
     function getNew() {
       const today = new Date().toDateString();
       if (data.vocab.todayDate !== today) { data.vocab.todayDate = today; data.vocab.todayLearned = []; saveData(); }
       return data.vocab.words.filter(w => !w.nextReview && !data.vocab.todayLearned.includes(w.word)).slice(0, data.vocab.dailyNew - data.vocab.todayLearned.length);
     }
-    function updateStats() { el('vocabNew').textContent = getNew().length; el('vocabReview').textContent = getReview().length; el('vocabMastered').textContent = data.vocab.words.filter(w => w.repetition >= 5).length; }
+    function updateStats() { 
+      el('vocabNew').textContent = getNew().length; 
+      el('vocabReview').textContent = getReview().length; 
+      el('vocabMastered').textContent = data.vocab.words.filter(w => w.repetition >= 5).length;
+      el('vocabTodayCount').textContent = data.vocab.todayLearned ? data.vocab.todayLearned.length : 0;
+      el('vocabStreak').textContent = data.vocab.streak || 0;
+    }
+    function updateStreak() {
+      const today = new Date().toDateString();
+      const lastDate = data.vocab.lastStudyDate;
+      if (lastDate !== today) {
+        const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if (lastDate === yesterday.toDateString()) {
+          data.vocab.streak = (data.vocab.streak || 0) + 1;
+        } else if (lastDate !== today) {
+          data.vocab.streak = 1;
+        }
+        data.vocab.lastStudyDate = today;
+        saveData();
+      }
+    }
     function vocabBtns(mode) {
       const c = el('vocabActions'); c.replaceChildren();
       if (mode === 'init') {
-        const show = ce('button', 'vocab-btn', '显示'); show.onclick = toggleMean;
+        const show = ce('button', 'vocab-btn', '显示释义'); show.onclick = toggleMean;
         const next = ce('button', 'vocab-btn primary', '下一个'); next.onclick = nextWord;
         c.appendChild(show); c.appendChild(next);
       } else {
-        const f = ce('button', 'vocab-btn danger', '忘了'); f.onclick = () => rate(1);
-        const m = ce('button', 'vocab-btn', '模糊'); m.onclick = () => rate(3);
-        const k = ce('button', 'vocab-btn success', '记住'); k.onclick = () => rate(5);
+        const f = ce('button', 'vocab-btn danger vocab-btn-small', '忘了'); f.onclick = () => rate(1);
+        const m = ce('button', 'vocab-btn warning vocab-btn-small', '模糊'); m.onclick = () => rate(3);
+        const k = ce('button', 'vocab-btn success vocab-btn-small', '记住'); k.onclick = () => rate(5);
         c.appendChild(f); c.appendChild(m); c.appendChild(k);
       }
     }
     function nextWord() {
       words = [...getReview(), ...getNew()];
-      if (!words.length) { el('vocabWord').textContent = '完成!'; el('vocabPhonetic').textContent = ''; el('vocabMeaning').textContent = '明天继续'; el('vocabMeaning').classList.add('show'); el('vocabActions').replaceChildren(); return; }
+      // Clear previous data
+      el('vocabExample').textContent = '';
+      el('vocabExample').classList.remove('show');
+      el('vocabSynonyms').innerHTML = '';
+      el('vocabSynonyms').classList.remove('show');
+      el('vocabProgress').textContent = '';
+      currentWordData = null;
+      
+      if (!words.length) { 
+        el('vocabWord').textContent = '今日完成!'; 
+        el('vocabPhonetic').textContent = ''; 
+        el('vocabMeaning').textContent = '明天继续学习'; 
+        el('vocabMeaning').classList.add('show'); 
+        el('vocabActions').replaceChildren(); 
+        return; 
+      }
       wordIdx = Math.floor(Math.random() * words.length);
-      const w = words[wordIdx]; el('vocabWord').textContent = w.word; el('vocabPhonetic').textContent = w.phonetic || ''; el('vocabMeaning').textContent = w.meaning; el('vocabMeaning').classList.remove('show'); showMeaning = false; vocabBtns('init');
+      const w = words[wordIdx]; 
+      currentWordData = w;
+      el('vocabWord').textContent = w.word; 
+      el('vocabPhonetic').textContent = w.phonetic || ''; 
+      el('vocabMeaning').textContent = w.meaning; 
+      el('vocabMeaning').classList.remove('show'); 
+      showMeaning = false; 
+      vocabBtns('init');
+      
+      // Show progress
+      const progress = w.repetition || 0;
+      el('vocabProgress').textContent = '进度: ' + Math.min(progress, 5) + '/5';
+      
+      // Fetch synonyms in background
+      fetchSynonyms(w.word);
     }
-    function toggleMean() { showMeaning = !showMeaning; el('vocabMeaning').classList.toggle('show', showMeaning); if (showMeaning) vocabBtns('rate'); }
+    function toggleMean() { 
+      showMeaning = !showMeaning; 
+      el('vocabMeaning').classList.toggle('show', showMeaning); 
+      el('vocabExample').classList.toggle('show', showMeaning);
+      el('vocabSynonyms').classList.toggle('show', showMeaning);
+      if (showMeaning) {
+        vocabBtns('rate');
+        // Fetch example sentence if not already fetched
+        if (currentWordData && !el('vocabExample').textContent) {
+          fetchExample(currentWordData.word);
+        }
+      }
+    }
     function rate(q) {
       const w = words[wordIdx]; if (!w) return;
+      updateStreak();
       if (q < 3) { w.repetition = 0; w.interval = 1; } else { w.interval = w.repetition === 0 ? 1 : w.repetition === 1 ? 6 : Math.round(w.interval * w.easeFactor); w.repetition++; }
       w.easeFactor = Math.max(1.3, w.easeFactor + (0.1 - (5-q)*(0.08+(5-q)*0.02)));
       const nr = new Date(); nr.setDate(nr.getDate() + w.interval); w.nextReview = nr.toISOString();
-      if (!data.vocab.todayLearned.includes(w.word)) data.vocab.todayLearned.push(w.word);
+      if (!data.vocab.todayLearned.includes(w.word)) {
+        data.vocab.todayLearned.push(w.word);
+        data.vocab.totalWordsLearned = (data.vocab.totalWordsLearned || 0) + 1;
+      }
       saveData(); updateStats(); nextWord();
     }
     function addVocab() {
@@ -998,6 +1113,107 @@
         if (p.length >= 2 && !data.vocab.words.find(w => w.word === p[0])) data.vocab.words.push({ word: p[0], phonetic: p[1] || '', meaning: p[2] || p[1], interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null });
       });
       saveData(); updateStats(); nextWord(); closeModal('vocabModal'); el('vocabInput').value = '';
+    }
+    
+    // Datamuse API - fetch synonyms
+    async function fetchSynonyms(word) {
+      try {
+        const res = await fetch('https://api.datamuse.com/words?rel_syn=' + encodeURIComponent(word) + '&max=6');
+        if (!res.ok) return;
+        const synonyms = await res.json();
+        if (synonyms.length > 0) {
+          const container = el('vocabSynonyms');
+          container.innerHTML = '<strong>近义词:</strong> ';
+          synonyms.forEach(s => {
+            const span = ce('span', '', s.word);
+            container.appendChild(span);
+          });
+        }
+      } catch (err) {
+        console.log('Synonyms fetch failed:', err);
+      }
+    }
+    
+    // Fetch example sentence from Free Dictionary API
+    async function fetchExample(word) {
+      try {
+        const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data[0] && data[0].meanings) {
+          for (const meaning of data[0].meanings) {
+            for (const def of meaning.definitions) {
+              if (def.example) {
+                el('vocabExample').textContent = '"' + def.example + '"';
+                return;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.log('Example fetch failed:', err);
+      }
+    }
+    
+    // Random Word API - fetch new random words
+    async function fetchRandomWord() {
+      const btn = el('fetchRandomWordBtn');
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      
+      try {
+        // Use Random Word API
+        const res = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+        if (!res.ok) throw new Error('API error');
+        const words = await res.json();
+        const randomWord = words[0];
+        
+        // Now look up the definition
+        const dictRes = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(randomWord));
+        if (!dictRes.ok) {
+          // Try another word if this one has no definition
+          return fetchRandomWord();
+        }
+        const dictData = await dictRes.json();
+        const entry = dictData[0];
+        
+        // Extract info
+        const phonetic = entry.phonetic || (entry.phonetics && entry.phonetics[0] ? entry.phonetics[0].text : '');
+        let meaning = '';
+        if (entry.meanings && entry.meanings[0] && entry.meanings[0].definitions && entry.meanings[0].definitions[0]) {
+          meaning = entry.meanings[0].partOfSpeech + ': ' + entry.meanings[0].definitions[0].definition;
+        }
+        
+        // Check if word already exists
+        if (data.vocab.words.find(w => w.word.toLowerCase() === randomWord.toLowerCase())) {
+          alert('词库中已有此单词: ' + randomWord);
+          return;
+        }
+        
+        // Add to vocab
+        data.vocab.words.push({
+          word: randomWord,
+          phonetic: phonetic,
+          meaning: meaning || 'No definition found',
+          interval: 1,
+          repetition: 0,
+          easeFactor: 2.5,
+          nextReview: null
+        });
+        saveData();
+        updateStats();
+        
+        // Show the new word
+        alert('已添加新单词: ' + randomWord);
+        nextWord();
+        
+      } catch (err) {
+        console.error('Random word error:', err);
+        alert('获取随机单词失败，请重试');
+      } finally {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
     }
 
     // Modal
@@ -1106,6 +1322,7 @@
     el('addTodoBtn').onclick = addTodo;
     el('archiveTodosBtn').onclick = archiveTodos;
     el('manageVocabBtn').onclick = () => openModal('vocabModal');
+    el('fetchRandomWordBtn').onclick = fetchRandomWord;
     el('saveVocabBtn').onclick = addVocab;
     el('closeVocabModal').onclick = () => closeModal('vocabModal');
     el('cancelVocabBtn').onclick = () => closeModal('vocabModal');
@@ -1303,7 +1520,7 @@
       }
     }
 
-    // Free Dictionary API - enhance vocab card
+    // Free Dictionary API - enhance vocab card with audio playback
     async function lookupWord(word) {
       try {
         const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word));
@@ -1315,72 +1532,32 @@
       }
     }
 
-    // Add dictionary lookup button to vocab display
-    const originalNextWord = nextWord;
-    nextWord = function() {
-      originalNextWord();
-      // Add lookup button after word is displayed
-      const wordEl = el('vocabWord');
-      const word = wordEl.textContent;
-      if (word && word !== '-' && word !== '完成!') {
-        const existingBtn = document.querySelector('.vocab-dict-btn');
-        if (existingBtn) existingBtn.remove();
-        
-        const btn = ce('span', 'vocab-dict-btn', '📖 查词典');
-        btn.onclick = async (e) => {
-          e.stopPropagation();
-          btn.textContent = '查询中...';
-          const dictData = await lookupWord(word);
-          if (dictData) {
-            showDictResult(dictData);
-          } else {
-            btn.textContent = '未找到';
-            setTimeout(() => { btn.textContent = '📖 查词典'; }, 2000);
+    // Play pronunciation audio
+    el('vocabPhonetic').onclick = async function(e) {
+      e.stopPropagation();
+      const word = el('vocabWord').textContent;
+      if (!word || word === '-' || word === '今日完成!') return;
+      
+      try {
+        const dictData = await lookupWord(word);
+        if (dictData && dictData.phonetics) {
+          for (const p of dictData.phonetics) {
+            if (p.audio) {
+              new Audio(p.audio).play();
+              return;
+            }
           }
-        };
-        wordEl.appendChild(btn);
+        }
+        // Fallback: use browser TTS
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(word);
+          utterance.lang = 'en-US';
+          speechSynthesis.speak(utterance);
+        }
+      } catch (err) {
+        console.log('Audio playback failed:', err);
       }
     };
-
-    function showDictResult(data) {
-      const existing = document.querySelector('.dict-result');
-      if (existing) existing.remove();
-      
-      const display = el('vocabDisplay');
-      const result = ce('div', 'dict-result');
-      
-      // Phonetics with audio
-      const phoneticsDiv = ce('div', 'dict-phonetics');
-      if (data.phonetics) {
-        data.phonetics.forEach(p => {
-          if (p.text) {
-            const phoneticSpan = ce('span', 'dict-phonetic', p.text + (p.audio ? ' 🔊' : ''));
-            if (p.audio) {
-              phoneticSpan.onclick = () => new Audio(p.audio).play();
-            }
-            phoneticsDiv.appendChild(phoneticSpan);
-          }
-        });
-      }
-      result.appendChild(phoneticsDiv);
-      
-      // Meanings
-      const meaningsDiv = ce('div', 'dict-meanings');
-      if (data.meanings) {
-        data.meanings.slice(0, 3).forEach(m => {
-          const meaningDiv = ce('div', 'dict-meaning');
-          const posSpan = ce('span', 'dict-pos', m.partOfSpeech);
-          meaningDiv.appendChild(posSpan);
-          if (m.definitions && m.definitions[0]) {
-            meaningDiv.appendChild(document.createTextNode(m.definitions[0].definition));
-          }
-          meaningsDiv.appendChild(meaningDiv);
-        });
-      }
-      result.appendChild(meaningsDiv);
-      
-      display.appendChild(result);
-    }
 
     // Event listeners for new features
     el('refreshWeatherBtn').onclick = fetchWeather;

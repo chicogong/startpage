@@ -740,7 +740,6 @@
         </div>
       </div>
       <div class="form-group"><label class="form-label">自定义背景URL</label><input type="url" class="form-input" id="customBgUrl" placeholder="https://..."></div>
-      <div class="form-group"><label class="form-label">OpenWeatherMap API Key</label><input type="text" class="form-input" id="weatherApiKey" placeholder="获取: openweathermap.org/api"></div>
       <div class="settings-section">
         <div class="settings-section-title">数据管理</div>
         <div class="settings-actions">
@@ -756,7 +755,7 @@
   <script>
     const STORAGE_KEY = 'startpage_data';
     const defaultData = {
-      theme: 'dark', background: 'gradient-1', customBg: '', weatherApiKey: '',
+      theme: 'dark', background: 'gradient-1', customBg: '',
       links: [
         // AI Assistants
         { name: 'ChatGPT', url: 'https://chat.openai.com', key: 'c' },
@@ -1111,20 +1110,8 @@
     el('closeVocabModal').onclick = () => closeModal('vocabModal');
     el('cancelVocabBtn').onclick = () => closeModal('vocabModal');
     el('vocabDisplay').onclick = () => { if (!showMeaning && words.length) toggleMean(); };
-    el('settingsBtn').onclick = () => { 
-      el('weatherApiKey').value = data.weatherApiKey || '';
-      openModal('settingsModal'); 
-    };
-    el('closeSettingsModal').onclick = () => {
-      // Save weather API key when closing settings
-      const newKey = el('weatherApiKey').value.trim();
-      if (newKey !== data.weatherApiKey) {
-        data.weatherApiKey = newKey;
-        saveData();
-        fetchWeather();
-      }
-      closeModal('settingsModal');
-    };
+    el('settingsBtn').onclick = () => openModal('settingsModal');
+    el('closeSettingsModal').onclick = () => closeModal('settingsModal');
     document.querySelectorAll('.bg-option').forEach(o => o.onclick = () => {
       document.querySelectorAll('.bg-option').forEach(x => x.classList.remove('active')); o.classList.add('active');
       data.background = o.dataset.bg; data.customBg = ''; el('customBgUrl').value = '';
@@ -1154,65 +1141,49 @@
 
     // ========== API Features ==========
 
-    // Weather API (OpenWeatherMap - free tier)
-    const weatherIcons = {
-      '01d': '☀️', '01n': '🌙', '02d': '⛅', '02n': '☁️', '03d': '☁️', '03n': '☁️',
-      '04d': '☁️', '04n': '☁️', '09d': '🌧️', '09n': '🌧️', '10d': '🌦️', '10n': '🌧️',
-      '11d': '⛈️', '11n': '⛈️', '13d': '❄️', '13n': '❄️', '50d': '🌫️', '50n': '🌫️'
+    // Weather API (wttr.in - free, no key needed)
+    const weatherCodeIcons = {
+      '113': '☀️', '116': '⛅', '119': '☁️', '122': '☁️', '143': '🌫️',
+      '176': '🌦️', '179': '🌨️', '182': '🌨️', '185': '🌨️', '200': '⛈️',
+      '227': '❄️', '230': '❄️', '248': '🌫️', '260': '🌫️', '263': '🌦️',
+      '266': '🌦️', '281': '🌨️', '284': '🌨️', '293': '🌦️', '296': '🌧️',
+      '299': '🌧️', '302': '🌧️', '305': '🌧️', '308': '🌧️', '311': '🌨️',
+      '314': '🌨️', '317': '🌨️', '320': '🌨️', '323': '🌨️', '326': '🌨️',
+      '329': '❄️', '332': '❄️', '335': '❄️', '338': '❄️', '350': '🌨️',
+      '353': '🌦️', '356': '🌧️', '359': '🌧️', '362': '🌨️', '365': '🌨️',
+      '368': '🌨️', '371': '❄️', '374': '🌨️', '377': '🌨️', '386': '⛈️',
+      '389': '⛈️', '392': '⛈️', '395': '❄️'
     };
-
-    function renderWeatherContent(html) {
-      el('weatherContent').innerHTML = html;
-    }
 
     async function fetchWeather() {
       const content = el('weatherContent');
-      const apiKey = data.weatherApiKey;
-      
-      // Check if API key is set
-      if (!apiKey) {
-        content.replaceChildren();
-        const errDiv = ce('div', 'weather-error');
-        errDiv.textContent = '请在设置中配置 OpenWeatherMap API Key';
-        const link = ce('a');
-        link.href = 'https://openweathermap.org/api';
-        link.target = '_blank';
-        link.style.cssText = 'color:var(--accent);font-size:11px;display:block;margin-top:4px;';
-        link.textContent = '获取免费 API Key';
-        errDiv.appendChild(document.createElement('br'));
-        errDiv.appendChild(link);
-        content.appendChild(errDiv);
-        return;
-      }
-
-      content.replaceChildren(ce('div', 'weather-loading', '获取位置中...'));
+      content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
 
       try {
-        // Get user location
-        const pos = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-        });
-        
-        const { latitude: lat, longitude: lon } = pos.coords;
-        content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
-
-        const res = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey + '&units=metric&lang=zh_cn');
+        const res = await fetch('https://wttr.in/?format=j1');
         if (!res.ok) throw new Error('API error');
         const w = await res.json();
+        
+        const current = w.current_condition[0];
+        const area = w.nearest_area[0];
+        const location = area.areaName[0].value + ', ' + area.country[0].value;
+        const weatherCode = current.weatherCode;
+        const icon = weatherCodeIcons[weatherCode] || '🌡️';
+        const desc = current.lang_zh && current.lang_zh[0] ? current.lang_zh[0].value : current.weatherDesc[0].value;
 
         content.replaceChildren();
         
         // Location
         const locDiv = ce('div', 'weather-location');
-        locDiv.textContent = '📍 ' + w.name;
+        locDiv.textContent = '📍 ' + location;
         content.appendChild(locDiv);
         
         // Main weather
         const mainDiv = ce('div', 'weather-main');
-        const iconSpan = ce('span', 'weather-icon', weatherIcons[w.weather[0].icon] || '🌡️');
+        const iconSpan = ce('span', 'weather-icon', icon);
         const infoDiv = ce('div');
-        const tempDiv = ce('div', 'weather-temp', Math.round(w.main.temp) + '°C');
-        const descDiv = ce('div', 'weather-desc', w.weather[0].description);
+        const tempDiv = ce('div', 'weather-temp', current.temp_C + '°C');
+        const descDiv = ce('div', 'weather-desc', desc);
         infoDiv.appendChild(tempDiv);
         infoDiv.appendChild(descDiv);
         mainDiv.appendChild(iconSpan);
@@ -1221,15 +1192,15 @@
         
         // Details
         const detailsDiv = ce('div', 'weather-details');
-        detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + w.main.humidity + '%'));
-        detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + w.wind.speed + 'm/s'));
-        detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + Math.round(w.main.feels_like) + '°C 体感'));
+        detailsDiv.appendChild(ce('span', 'weather-detail', '💧 ' + current.humidity + '%'));
+        detailsDiv.appendChild(ce('span', 'weather-detail', '💨 ' + current.windspeedKmph + 'km/h'));
+        detailsDiv.appendChild(ce('span', 'weather-detail', '🌡️ ' + current.FeelsLikeC + '°C 体感'));
         content.appendChild(detailsDiv);
         
       } catch (err) {
         console.error('Weather error:', err);
         content.replaceChildren();
-        const errDiv = ce('div', 'weather-error', err.code === 1 ? '请允许位置访问' : '获取天气失败');
+        const errDiv = ce('div', 'weather-error', '获取天气失败');
         const retryBtn = ce('button', '', '重试');
         retryBtn.onclick = fetchWeather;
         errDiv.appendChild(retryBtn);

@@ -1852,7 +1852,7 @@
       const content = el('quoteContent');
       if (j.type === 'twopart') {
         const escapedSetup = escapeHtml(j.setup);
-        const escapedDelivery = escapeHtml(j.delivery).replace(/'/g, "\\'");
+        const escapedDelivery = escapeHtml(j.delivery).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         content.innerHTML = `${escapedSetup} <span style="color:var(--accent);cursor:pointer" onclick="this.textContent='${escapedDelivery}'">[点击揭晓]</span>`;
       } else {
         content.textContent = j.joke;
@@ -1898,7 +1898,7 @@
       if (j.type === 'twopart') {
         currentJokePunchline = j.delivery;
         const escapedSetup = escapeHtml(j.setup);
-        const escapedDelivery = escapeHtml(j.delivery).replace(/'/g, "\\'");
+        const escapedDelivery = escapeHtml(j.delivery).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         content.innerHTML = `<span class="joke-text">${escapedSetup} <span class="joke-punchline" onclick="this.textContent='${escapedDelivery}'; this.classList.add('show');">点击揭晓...</span></span>`;
       } else {
         content.innerHTML = `<span class="joke-text">${escapeHtml(j.joke)}</span>`;

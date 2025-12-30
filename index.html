@@ -579,6 +579,32 @@
       .vocab-btn .icon { font-size: 12px; }
       .vocab-word { font-size: 1.2rem; }
     }
+    
+    /* Mobile performance: reduce expensive effects */
+    @media (max-width: 700px) {
+      .card { backdrop-filter: blur(8px); }
+      .modal { backdrop-filter: blur(10px); }
+    }
+    
+    /* Safe area for notched phones */
+    @supports (padding: max(0px)) {
+      @media (max-width: 700px) {
+        .container { 
+          padding-left: max(14px, env(safe-area-inset-left));
+          padding-right: max(14px, env(safe-area-inset-right));
+          padding-bottom: max(16px, env(safe-area-inset-bottom));
+        }
+      }
+    }
+    
+    /* Touch-friendly minimum tap targets */
+    @media (pointer: coarse) {
+      .card-action { min-width: 44px; min-height: 44px; }
+      .icon-btn { min-width: 44px; min-height: 44px; }
+      .todo-checkbox { min-width: 20px; min-height: 20px; }
+      .vocab-btn { min-height: 44px; }
+      .vocab-btn-reveal { min-height: 44px; }
+    }
 
     /* Footer */
     .footer { display: none; }
@@ -1696,7 +1722,10 @@
       content.replaceChildren(ce('div', 'weather-loading', '获取天气中...'));
 
       try {
-        const res = await fetch('https://wttr.in/?format=j1');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+        const res = await fetch('https://wttr.in/?format=j1', { signal: controller.signal });
+        clearTimeout(timeoutId);
         if (!res.ok) throw new Error('API error');
         const w = await res.json();
         

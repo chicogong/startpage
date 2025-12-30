@@ -66,7 +66,6 @@
     [data-theme="light"] .quick-link { background: #fff; border: 1px solid #eee; }
     [data-theme="light"] .quick-link:hover { background: #f5f5f5; border-color: #ddd; }
     [data-theme="light"] .quick-link .key { background: #eee; color: var(--text-muted); }
-    [data-theme="light"] .clock { text-shadow: none; color: #ddd; }
     [data-theme="light"] .countdown-item { background: #fff; border: 1px solid #eee; border-left: 3px solid var(--accent); }
     [data-theme="light"] .todo-item { background: #fff; border: 1px solid #eee; }
     [data-theme="light"] .vocab-stat { background: #fff; border: 1px solid #eee; }
@@ -125,9 +124,9 @@
     /* Header */
     .header {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 16px; padding: 8px 0;
     }
-    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left { display: flex; align-items: center; gap: 20px; }
     .search-box { position: relative; }
     .search-box input {
       width: 200px; padding: 8px 12px 8px 36px;
@@ -188,15 +187,20 @@
     }
     .batch-link-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
 
-    /* Hero - Compact */
+    /* Hero - Left aligned compact */
     .hero {
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center; padding: 24px 0 20px;
+      display: none;
     }
-    .time-row { display: flex; align-items: baseline; gap: 12px; }
-    .clock { font-size: 4rem; font-weight: 300; letter-spacing: -2px; color: rgba(255,255,255,0.15); }
-    .greeting { font-size: 1rem; color: var(--text-secondary); }
-    .date { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+    
+    /* Time in header */
+    .header-time {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .clock { font-size: 2.5rem; font-weight: 300; letter-spacing: -1px; color: var(--text-primary); }
+    .time-info { display: flex; flex-direction: column; }
+    .greeting { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
+    .date { font-size: 0.75rem; color: var(--text-muted); }
+    [data-theme="light"] .clock { color: #333; }
 
     /* Dashboard */
     .dashboard {
@@ -421,6 +425,13 @@
   <div class="container">
     <header class="header">
       <div class="header-left">
+        <div class="header-time">
+          <h1 class="clock" id="clock">12:00</h1>
+          <div class="time-info">
+            <span class="greeting" id="greeting">下午好</span>
+            <span class="date" id="dateDisplay">2024年1月1日 星期一</span>
+          </div>
+        </div>
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -443,14 +454,6 @@
     </header>
 
     <nav class="quick-links" id="quickLinks"></nav>
-
-    <section class="hero">
-      <div class="time-row">
-        <h1 class="clock" id="clock">12:00</h1>
-        <span class="greeting" id="greeting">下午好</span>
-      </div>
-      <p class="date" id="dateDisplay">2024年1月1日 星期一</p>
-    </section>
 
     <main class="dashboard">
       <section class="card">

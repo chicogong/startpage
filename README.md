@@ -10,6 +10,7 @@ A minimal, privacy-first personal start page with glassmorphism design.
 
 ## Features
 
+- **First-Time Setup** - 📱 Mobile-first onboarding with theme selection, location setup, and bookmark import
 - **Quick Links** - Bookmarks with favicons and single-key shortcuts
 - **Pomodoro Timer** - Focus timer with customizable work/break intervals
 - **Countdown Timers** - Track important dates with urgency indicators
@@ -24,6 +25,28 @@ A minimal, privacy-first personal start page with glassmorphism design.
 ## Usage
 
 Open `index.html` in your browser, or set it as your homepage/new tab page.
+
+### First-Time Setup
+
+New users will see a 5-step onboarding flow:
+
+1. **Welcome** 👋 - Introduction to Start Page
+2. **Theme** 🎨 - Choose dark or light mode
+3. **Location** 🌍 - Set location for weather (optional)
+4. **Import** 🔗 - Quick bookmark import
+5. **Tutorial** ✨ - Learn keyboard shortcuts and gestures
+
+To restart onboarding: Settings ⚙️ → 重新引导
+
+### Quick Bookmark Import
+
+During onboarding or via batch import, paste links in these formats:
+
+```
+https://google.com                    # Auto-extracts domain name
+Google | https://google.com           # Custom name
+Google | https://google.com | g       # With shortcut key
+```
 
 ### Keyboard Shortcuts
 

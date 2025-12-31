@@ -272,6 +272,17 @@
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card:hover { background: var(--glass-bg-hover); }
+    .card.draggable { cursor: grab; }
+    .card.dragging { 
+      opacity: 0.8; cursor: grabbing;
+      transform: scale(1.02) rotate(1deg);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    .card.drag-over {
+      box-shadow: 0 0 0 2px var(--accent);
+      transform: scale(1.01);
+    }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .card-title { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
     .card-action {
@@ -311,12 +322,72 @@
       position: absolute; top: 4px; right: 4px;
       opacity: 0; transition: opacity 0.15s; 
       width: 18px; height: 18px;
+      pointer-events: none;
     }
-    .countdown-item:hover .countdown-delete { opacity: 1; }
+    .countdown-item:hover .countdown-delete { opacity: 1; pointer-events: auto; }
     [data-theme="light"] .countdown-item { background: #fff; border: 1px solid #eee; border-radius: 20px; }
     [data-theme="light"] .countdown-item:hover { background: #fafafa; }
     [data-theme="light"] .countdown-item.urgent { background: #fef2f2; border-color: #fecaca; }
     [data-theme="light"] .countdown-item.soon { background: #fffbeb; border-color: #fed7aa; }
+
+    /* Pomodoro Timer */
+    .pomodoro-card { text-align: center; }
+    .pomodoro-stats { display: flex; align-items: center; gap: 8px; }
+    .pomodoro-today { 
+      font-size: 12px; color: var(--text-secondary); 
+      background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 12px;
+    }
+    .pomodoro-content { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .pomodoro-timer { position: relative; width: 140px; height: 140px; }
+    .pomodoro-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .pomodoro-ring-bg { 
+      fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 6;
+    }
+    .pomodoro-ring-progress { 
+      fill: none; stroke: var(--accent); stroke-width: 6;
+      stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke 0.3s;
+    }
+    .pomodoro-card.break .pomodoro-ring-progress { stroke: var(--success); }
+    .pomodoro-card.long-break .pomodoro-ring-progress { stroke: #a855f7; }
+    .pomodoro-time { 
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%);
+      font-size: 2rem; font-weight: 300; font-variant-numeric: tabular-nums;
+    }
+    .pomodoro-status { 
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, 60%);
+      font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
+    }
+    .pomodoro-controls { display: flex; gap: 8px; }
+    .pomodoro-btn { 
+      padding: 10px 20px; border: none; border-radius: 12px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .pomodoro-btn-main { 
+      background: var(--accent); color: white; min-width: 80px;
+    }
+    .pomodoro-btn-main:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .pomodoro-btn-main:active { transform: scale(0.97); }
+    .pomodoro-btn-main.running { background: var(--warning); }
+    .pomodoro-btn-reset { 
+      background: rgba(255,255,255,0.06); color: var(--text-secondary);
+    }
+    .pomodoro-btn-reset:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+    .pomodoro-phases { display: flex; gap: 6px; margin-top: 4px; }
+    .pomodoro-phase { 
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); transition: all 0.3s;
+    }
+    .pomodoro-phase.active { background: var(--accent); transform: scale(1.2); }
+    .pomodoro-phase.completed { background: var(--success); }
+    
+    /* Pomodoro Light Theme */
+    [data-theme="light"] .pomodoro-today { background: #f3f4f6; }
+    [data-theme="light"] .pomodoro-ring-bg { stroke: #e5e7eb; }
+    [data-theme="light"] .pomodoro-btn-reset { background: #f3f4f6; color: #6b7280; }
+    [data-theme="light"] .pomodoro-btn-reset:hover { background: #e5e7eb; color: #374151; }
+    [data-theme="light"] .pomodoro-phase { background: #e5e7eb; }
 
     /* Todo */
     .todo-tabs {
@@ -614,6 +685,10 @@
       .countdown-date { font-size: 8px; }
       .countdown-days { font-size: 1.2rem; }
       .countdown-label { font-size: 8px; }
+      /* Mobile: hide delete button completely */
+      .countdown-delete { 
+        display: none;
+      }
       
       /* Todo mobile - more prominent */
       .todo-tabs { padding: 4px; border-radius: 16px; }
@@ -634,6 +709,14 @@
       .daily-quote { margin-bottom: 8px; }
       .daily-quote .quote-text { font-size: 12px; line-height: 1.6; }
       .quote-actions { opacity: 1; }
+      
+      /* Pomodoro mobile */
+      .pomodoro-timer { width: 120px; height: 120px; }
+      .pomodoro-time { font-size: 1.6rem; }
+      .pomodoro-status { font-size: 10px; }
+      .pomodoro-btn { padding: 8px 16px; font-size: 12px; }
+      .pomodoro-phases { gap: 4px; }
+      .pomodoro-phase { width: 6px; height: 6px; }
       
       /* Vocab mobile */
       .vocab-card { overflow: hidden; }
@@ -896,8 +979,8 @@
 
     <nav class="quick-links" id="quickLinks"></nav>
 
-    <main class="dashboard">
-      <section class="card">
+    <main class="dashboard" id="dashboard">
+      <section class="card" data-card-id="countdown">
         <div class="card-header">
           <span class="card-title">倒计时</span>
           <button class="card-action" id="addCountdownBtn">
@@ -907,7 +990,36 @@
         <div class="countdown-list" id="countdownList"></div>
       </section>
 
-      <section class="card vocab-card">
+      <section class="card pomodoro-card" data-card-id="pomodoro">
+        <div class="card-header">
+          <span class="card-title">番茄钟</span>
+          <div class="pomodoro-stats">
+            <span class="pomodoro-today" id="pomodoroToday" title="今日完成">🍅 0</span>
+          </div>
+        </div>
+        <div class="pomodoro-content">
+          <div class="pomodoro-timer">
+            <svg class="pomodoro-ring" viewBox="0 0 100 100">
+              <circle class="pomodoro-ring-bg" cx="50" cy="50" r="45"/>
+              <circle class="pomodoro-ring-progress" id="pomodoroProgress" cx="50" cy="50" r="45"/>
+            </svg>
+            <div class="pomodoro-time" id="pomodoroTime">25:00</div>
+            <div class="pomodoro-status" id="pomodoroStatus">专注</div>
+          </div>
+          <div class="pomodoro-controls">
+            <button class="pomodoro-btn pomodoro-btn-main" id="pomodoroStartBtn">开始</button>
+            <button class="pomodoro-btn pomodoro-btn-reset" id="pomodoroResetBtn">重置</button>
+          </div>
+          <div class="pomodoro-phases" id="pomodoroPhases">
+            <span class="pomodoro-phase active"></span>
+            <span class="pomodoro-phase"></span>
+            <span class="pomodoro-phase"></span>
+            <span class="pomodoro-phase"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card vocab-card" data-card-id="vocab">
         <div class="card-header">
           <span class="card-title">单词学习</span>
           <div class="vocab-header-actions">
@@ -980,7 +1092,7 @@
         <div class="vocab-actions" id="vocabActions"></div>
       </section>
 
-      <section class="card">
+      <section class="card" data-card-id="todo">
         <div class="card-header">
           <span class="card-title">待办</span>
           <button class="card-action" id="archiveTodosBtn" title="归档">
@@ -1204,7 +1316,21 @@
           { word: 'embedding', phonetic: '/ɪmˈbedɪŋ/', meaning: '嵌入，向量表示', interval: 1, repetition: 0, easeFactor: 2.5, nextReview: null }
         ],
         dailyNew: 5, todayLearned: [], streak: 0, lastStudyDate: null, totalWordsLearned: 0
-      }
+      },
+      pomodoro: {
+        todayCount: 0,
+        weekCount: 0,
+        totalCount: 0,
+        todayDate: null,
+        weekStart: null,
+        // Timer state persistence
+        timerTime: null,
+        timerMode: 'work',
+        timerPhase: 0,
+        timerRunning: false,
+        timerLastTick: null
+      },
+      cardOrder: ['countdown', 'pomodoro', 'vocab', 'todo']
     };
     let data = loadData();
     function loadData() {
@@ -1214,6 +1340,7 @@
         // Deep merge nested objects
         merged.todos = { ...defaultData.todos, ...(saved.todos || {}) };
         merged.vocab = { ...defaultData.vocab, ...(saved.vocab || {}) };
+        merged.pomodoro = { ...defaultData.pomodoro, ...(saved.pomodoro || {}) };
         return merged;
       } catch { return JSON.parse(JSON.stringify(defaultData)); }
     }
@@ -1410,7 +1537,7 @@
         if (item.repeat) nameEl.innerHTML += ' <span style="font-size:10px;opacity:0.6">🔁</span>';
         info.appendChild(nameEl);
         info.appendChild(ce('div', 'countdown-date', item.nextDate.toLocaleDateString('zh-CN')));
-        const time = ce('div', 'countdown-time'); time.appendChild(ce('div', 'countdown-days', diff > 0 ? diff : '今天')); time.appendChild(ce('div', 'countdown-label', diff > 0 ? '天' : ''));
+        const time = ce('div', 'countdown-time'); time.appendChild(ce('div', 'countdown-days', diff > 0 ? diff : '今天'));
         const del = ce('button', 'card-action countdown-delete'); del.appendChild(svg('M18 6L6 18M6 6l12 12')); del.onclick = () => { data.countdowns.splice(idx, 1); saveData(); renderCountdowns(); };
         d.appendChild(info); d.appendChild(time); d.appendChild(del); c.appendChild(d);
       });
@@ -1424,6 +1551,358 @@
       if (isNaN(dateObj.getTime())) return alert('日期格式不正确');
       data.countdowns.push({ name, date, repeat }); saveData(); renderCountdowns(); closeModal('countdownModal');
       el('countdownName').value = ''; el('countdownDate').value = ''; el('countdownRepeat').checked = false;
+    }
+
+    // Pomodoro Timer
+    const POMODORO_WORK = 25 * 60;      // 25 minutes
+    const POMODORO_SHORT = 5 * 60;      // 5 minutes
+    const POMODORO_LONG = 15 * 60;      // 15 minutes
+    const POMODORO_CYCLE = 4;           // Long break after 4 pomodoros
+    
+    let pomodoroTime = POMODORO_WORK;
+    let pomodoroInterval = null;
+    let pomodoroPhase = 0;              // 0-3: work phases, triggers long break after 4
+    let pomodoroMode = 'work';          // 'work', 'break', 'longBreak'
+    let pomodoroRunning = false;
+    const originalTitle = document.title;
+    
+    // Card drag and drop
+    let draggedCard = null;
+    
+    function initCardDrag() {
+      const dashboard = el('dashboard');
+      const cards = dashboard.querySelectorAll('.card[data-card-id]');
+      
+      // Apply saved order
+      applyCardOrder();
+      
+      cards.forEach(card => {
+        card.classList.add('draggable');
+        card.draggable = true;
+        
+        // Desktop drag events
+        card.ondragstart = (e) => {
+          draggedCard = card;
+          card.classList.add('dragging');
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+          // Delay to allow drag image to be captured
+          setTimeout(() => card.style.opacity = '0.5', 0);
+        };
+        
+        card.ondragend = () => {
+          card.classList.remove('dragging');
+          card.style.opacity = '';
+          draggedCard = null;
+          document.querySelectorAll('.card.drag-over').forEach(c => c.classList.remove('drag-over'));
+        };
+        
+        card.ondragover = (e) => {
+          e.preventDefault();
+          if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+          if (draggedCard && draggedCard !== card) {
+            card.classList.add('drag-over');
+          }
+        };
+        
+        card.ondragleave = () => {
+          card.classList.remove('drag-over');
+        };
+        
+        card.ondrop = (e) => {
+          e.preventDefault();
+          card.classList.remove('drag-over');
+          if (draggedCard && draggedCard !== card) {
+            swapCards(draggedCard, card);
+          }
+        };
+        
+        // Touch drag support
+        initTouchDrag(card, {
+          onDragStart: (el) => el.dataset.cardId,
+          onDragOver: (elementBelow, fromId) => {
+            const targetCard = elementBelow.closest('.card[data-card-id]');
+            if (targetCard && targetCard.dataset.cardId !== fromId) return targetCard;
+            return null;
+          },
+          onDrop: (target, fromId) => {
+            const fromCard = document.querySelector(`.card[data-card-id="${fromId}"]`);
+            if (fromCard && target) {
+              swapCards(fromCard, target);
+            }
+          }
+        });
+      });
+    }
+    
+    function swapCards(card1, card2) {
+      const dashboard = el('dashboard');
+      const cards = [...dashboard.querySelectorAll('.card[data-card-id]')];
+      const idx1 = cards.indexOf(card1);
+      const idx2 = cards.indexOf(card2);
+      
+      if (idx1 < idx2) {
+        card2.after(card1);
+      } else {
+        card2.before(card1);
+      }
+      
+      // Update saved order
+      saveCardOrder();
+    }
+    
+    function saveCardOrder() {
+      const dashboard = el('dashboard');
+      const cards = dashboard.querySelectorAll('.card[data-card-id]');
+      data.cardOrder = [...cards].map(c => c.dataset.cardId);
+      saveData();
+    }
+    
+    function applyCardOrder() {
+      const dashboard = el('dashboard');
+      const order = data.cardOrder || ['countdown', 'pomodoro', 'vocab', 'todo'];
+      
+      order.forEach(id => {
+        const card = dashboard.querySelector(`.card[data-card-id="${id}"]`);
+        if (card) dashboard.appendChild(card);
+      });
+    }
+
+    function initPomodoro() {
+      // Reset daily/weekly counts if needed
+      const today = new Date().toDateString();
+      const weekStart = getWeekStart();
+      
+      if (data.pomodoro.todayDate !== today) {
+        data.pomodoro.todayCount = 0;
+        data.pomodoro.todayDate = today;
+      }
+      if (data.pomodoro.weekStart !== weekStart) {
+        data.pomodoro.weekCount = 0;
+        data.pomodoro.weekStart = weekStart;
+      }
+      
+      // Restore timer state
+      if (data.pomodoro.timerTime !== null) {
+        pomodoroMode = data.pomodoro.timerMode || 'work';
+        pomodoroPhase = data.pomodoro.timerPhase || 0;
+        
+        if (data.pomodoro.timerRunning && data.pomodoro.timerLastTick) {
+          // Calculate elapsed time while page was closed
+          const elapsed = Math.floor((Date.now() - data.pomodoro.timerLastTick) / 1000);
+          pomodoroTime = Math.max(0, data.pomodoro.timerTime - elapsed);
+          
+          if (pomodoroTime <= 0) {
+            // Timer completed while away - handle completion
+            handleOfflineCompletion();
+          } else {
+            // Resume timer
+            startPomodoro();
+          }
+        } else {
+          // Was paused, just restore state
+          pomodoroTime = data.pomodoro.timerTime;
+        }
+      }
+      
+      saveData();
+      updatePomodoroDisplay();
+      updatePomodoroStats();
+    }
+    
+    function handleOfflineCompletion() {
+      // Timer finished while page was closed
+      if (pomodoroMode === 'work') {
+        data.pomodoro.todayCount++;
+        data.pomodoro.weekCount++;
+        data.pomodoro.totalCount++;
+        pomodoroPhase++;
+        
+        if (pomodoroPhase >= POMODORO_CYCLE) {
+          pomodoroMode = 'longBreak';
+          pomodoroTime = POMODORO_LONG;
+          pomodoroPhase = 0;
+        } else {
+          pomodoroMode = 'break';
+          pomodoroTime = POMODORO_SHORT;
+        }
+      } else {
+        pomodoroMode = 'work';
+        pomodoroTime = POMODORO_WORK;
+      }
+      pomodoroRunning = false;
+      savePomodoroState();
+      playNotification('计时已完成！');
+    }
+    
+    function savePomodoroState() {
+      data.pomodoro.timerTime = pomodoroTime;
+      data.pomodoro.timerMode = pomodoroMode;
+      data.pomodoro.timerPhase = pomodoroPhase;
+      data.pomodoro.timerRunning = pomodoroRunning;
+      data.pomodoro.timerLastTick = pomodoroRunning ? Date.now() : null;
+      saveData();
+    }
+    
+    function getWeekStart() {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - d.getDay());
+      return d.toDateString();
+    }
+    
+    function updatePomodoroDisplay() {
+      const mins = Math.floor(pomodoroTime / 60);
+      const secs = pomodoroTime % 60;
+      const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+      el('pomodoroTime').textContent = timeStr;
+      
+      // Update page title when running
+      if (pomodoroRunning) {
+        const modeEmoji = pomodoroMode === 'work' ? '🍅' : '☕';
+        document.title = `${modeEmoji} ${timeStr} - ${originalTitle}`;
+      } else {
+        document.title = originalTitle;
+      }
+      
+      // Update ring progress
+      const total = pomodoroMode === 'work' ? POMODORO_WORK 
+                  : pomodoroMode === 'longBreak' ? POMODORO_LONG 
+                  : POMODORO_SHORT;
+      const progress = 1 - (pomodoroTime / total);
+      const circumference = 2 * Math.PI * 45; // r=45
+      el('pomodoroProgress').style.strokeDashoffset = circumference * (1 - progress);
+      
+      // Update status text
+      const statusText = pomodoroMode === 'work' ? '专注' 
+                       : pomodoroMode === 'longBreak' ? '长休息' 
+                       : '休息';
+      el('pomodoroStatus').textContent = statusText;
+      
+      // Update card class for color
+      const card = document.querySelector('.pomodoro-card');
+      card.classList.remove('break', 'long-break');
+      if (pomodoroMode === 'break') card.classList.add('break');
+      if (pomodoroMode === 'longBreak') card.classList.add('long-break');
+      
+      // Update button text
+      el('pomodoroStartBtn').textContent = pomodoroRunning ? '暂停' : '开始';
+      el('pomodoroStartBtn').classList.toggle('running', pomodoroRunning);
+      
+      // Update phase indicators
+      const phases = document.querySelectorAll('.pomodoro-phase');
+      phases.forEach((p, i) => {
+        p.classList.remove('active', 'completed');
+        if (i < pomodoroPhase) p.classList.add('completed');
+        if (i === pomodoroPhase && pomodoroMode === 'work') p.classList.add('active');
+      });
+    }
+    
+    function updatePomodoroStats() {
+      el('pomodoroToday').textContent = `🍅 ${data.pomodoro.todayCount}`;
+    }
+    
+    function togglePomodoro() {
+      if (pomodoroRunning) {
+        pausePomodoro();
+      } else {
+        startPomodoro();
+      }
+    }
+    
+    function startPomodoro() {
+      pomodoroRunning = true;
+      pomodoroInterval = setInterval(() => {
+        pomodoroTime--;
+        updatePomodoroDisplay();
+        savePomodoroState();
+        
+        if (pomodoroTime <= 0) {
+          completePomodoro();
+        }
+      }, 1000);
+      savePomodoroState();
+      updatePomodoroDisplay();
+    }
+    
+    function pausePomodoro() {
+      pomodoroRunning = false;
+      clearInterval(pomodoroInterval);
+      pomodoroInterval = null;
+      savePomodoroState();
+      updatePomodoroDisplay();
+    }
+    
+    function resetPomodoro() {
+      pausePomodoro();
+      pomodoroMode = 'work';
+      pomodoroTime = POMODORO_WORK;
+      pomodoroPhase = 0;
+      savePomodoroState();
+      updatePomodoroDisplay();
+    }
+    
+    function completePomodoro() {
+      pausePomodoro();
+      
+      if (pomodoroMode === 'work') {
+        // Completed a work session
+        data.pomodoro.todayCount++;
+        data.pomodoro.weekCount++;
+        data.pomodoro.totalCount++;
+        saveData();
+        updatePomodoroStats();
+        
+        pomodoroPhase++;
+        
+        // Determine next phase
+        if (pomodoroPhase >= POMODORO_CYCLE) {
+          pomodoroMode = 'longBreak';
+          pomodoroTime = POMODORO_LONG;
+          pomodoroPhase = 0;
+          playNotification('完成4个番茄！长休息15分钟');
+        } else {
+          pomodoroMode = 'break';
+          pomodoroTime = POMODORO_SHORT;
+          playNotification('番茄完成！休息5分钟');
+        }
+      } else {
+        // Completed a break
+        pomodoroMode = 'work';
+        pomodoroTime = POMODORO_WORK;
+        playNotification('休息结束！开始新的番茄');
+      }
+      
+      savePomodoroState();
+      updatePomodoroDisplay();
+    }
+    
+    function playNotification(message) {
+      // Play sound
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {
+        console.log('Audio not supported');
+      }
+      
+      // Browser notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('番茄钟', { body: message, icon: '🍅' });
+      } else if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+      }
     }
 
     // Todo
@@ -1888,6 +2367,8 @@
     el('saveCountdownBtn').onclick = addCountdown;
     el('closeCountdownModal').onclick = () => closeModal('countdownModal');
     el('cancelCountdownBtn').onclick = () => closeModal('countdownModal');
+    el('pomodoroStartBtn').onclick = togglePomodoro;
+    el('pomodoroResetBtn').onclick = resetPomodoro;
     document.querySelectorAll('.todo-tab').forEach(t => t.onclick = () => switchTab(t.dataset.tab));
     el('todoInput').onkeypress = e => { if (e.key === 'Enter') addTodo(); };
     el('addTodoBtn').onclick = addTodo;
@@ -2084,7 +2565,7 @@
     }
 
     // Init
-    initTheme(); initBg(); updateClock(); renderLinks(); renderCountdowns(); renderTodos(); updateStats(); nextWord();
+    initTheme(); initBg(); updateClock(); renderLinks(); renderCountdowns(); initPomodoro(); renderTodos(); updateStats(); nextWord(); initCardDrag();
     setInterval(updateClock, 1000); setInterval(renderCountdowns, 60000);
 
     // ========== API Features ==========

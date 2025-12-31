@@ -1323,10 +1323,10 @@
         a.ondragstart = (e) => { 
           draggedLinkIdx = parseInt(a.dataset.idx); 
           a.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
         };
         a.ondragend = () => { a.classList.remove('dragging'); draggedLinkIdx = null; };
-        a.ondragover = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; a.classList.add('drag-over'); };
+        a.ondragover = (e) => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'; a.classList.add('drag-over'); };
         a.ondragleave = () => { a.classList.remove('drag-over'); };
         a.ondrop = (e) => {
           e.preventDefault(); a.classList.remove('drag-over');
@@ -1444,10 +1444,10 @@
           draggedTodoIdx = i; 
           draggedFromTab = curTab; 
           d.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
         };
         d.ondragend = () => { d.classList.remove('dragging'); draggedTodoIdx = null; draggedFromTab = null; };
-        d.ondragover = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; d.classList.add('drag-over'); };
+        d.ondragover = (e) => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'; d.classList.add('drag-over'); };
         d.ondragleave = () => { d.classList.remove('drag-over'); };
         d.ondrop = (e) => {
           e.preventDefault(); d.classList.remove('drag-over');

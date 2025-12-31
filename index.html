@@ -685,13 +685,10 @@
       .countdown-date { font-size: 8px; }
       .countdown-days { font-size: 1.2rem; }
       .countdown-label { font-size: 8px; }
-      /* Mobile: show delete button on active/focus, smaller size */
+      /* Mobile: hide delete button completely */
       .countdown-delete { 
-        width: 16px; height: 16px; 
-        opacity: 0.3; 
-        pointer-events: auto;
+        display: none;
       }
-      .countdown-item:active .countdown-delete { opacity: 0.8; }
       
       /* Todo mobile - more prominent */
       .todo-tabs { padding: 4px; border-radius: 16px; }
@@ -1325,7 +1322,13 @@
         weekCount: 0,
         totalCount: 0,
         todayDate: null,
-        weekStart: null
+        weekStart: null,
+        // Timer state persistence
+        timerTime: null,
+        timerMode: 'work',
+        timerPhase: 0,
+        timerRunning: false,
+        timerLastTick: null
       },
       cardOrder: ['countdown', 'pomodoro', 'vocab', 'todo']
     };
@@ -1534,7 +1537,7 @@
         if (item.repeat) nameEl.innerHTML += ' <span style="font-size:10px;opacity:0.6">🔁</span>';
         info.appendChild(nameEl);
         info.appendChild(ce('div', 'countdown-date', item.nextDate.toLocaleDateString('zh-CN')));
-        const time = ce('div', 'countdown-time'); time.appendChild(ce('div', 'countdown-days', diff > 0 ? diff : '今天')); time.appendChild(ce('div', 'countdown-label', diff > 0 ? '天' : ''));
+        const time = ce('div', 'countdown-time'); time.appendChild(ce('div', 'countdown-days', diff > 0 ? diff : '今天'));
         const del = ce('button', 'card-action countdown-delete'); del.appendChild(svg('M18 6L6 18M6 6l12 12')); del.onclick = () => { data.countdowns.splice(idx, 1); saveData(); renderCountdowns(); };
         d.appendChild(info); d.appendChild(time); d.appendChild(del); c.appendChild(d);
       });
@@ -1677,9 +1680,67 @@
         data.pomodoro.weekCount = 0;
         data.pomodoro.weekStart = weekStart;
       }
+      
+      // Restore timer state
+      if (data.pomodoro.timerTime !== null) {
+        pomodoroMode = data.pomodoro.timerMode || 'work';
+        pomodoroPhase = data.pomodoro.timerPhase || 0;
+        
+        if (data.pomodoro.timerRunning && data.pomodoro.timerLastTick) {
+          // Calculate elapsed time while page was closed
+          const elapsed = Math.floor((Date.now() - data.pomodoro.timerLastTick) / 1000);
+          pomodoroTime = Math.max(0, data.pomodoro.timerTime - elapsed);
+          
+          if (pomodoroTime <= 0) {
+            // Timer completed while away - handle completion
+            handleOfflineCompletion();
+          } else {
+            // Resume timer
+            startPomodoro();
+          }
+        } else {
+          // Was paused, just restore state
+          pomodoroTime = data.pomodoro.timerTime;
+        }
+      }
+      
       saveData();
       updatePomodoroDisplay();
       updatePomodoroStats();
+    }
+    
+    function handleOfflineCompletion() {
+      // Timer finished while page was closed
+      if (pomodoroMode === 'work') {
+        data.pomodoro.todayCount++;
+        data.pomodoro.weekCount++;
+        data.pomodoro.totalCount++;
+        pomodoroPhase++;
+        
+        if (pomodoroPhase >= POMODORO_CYCLE) {
+          pomodoroMode = 'longBreak';
+          pomodoroTime = POMODORO_LONG;
+          pomodoroPhase = 0;
+        } else {
+          pomodoroMode = 'break';
+          pomodoroTime = POMODORO_SHORT;
+        }
+      } else {
+        pomodoroMode = 'work';
+        pomodoroTime = POMODORO_WORK;
+      }
+      pomodoroRunning = false;
+      savePomodoroState();
+      playNotification('计时已完成！');
+    }
+    
+    function savePomodoroState() {
+      data.pomodoro.timerTime = pomodoroTime;
+      data.pomodoro.timerMode = pomodoroMode;
+      data.pomodoro.timerPhase = pomodoroPhase;
+      data.pomodoro.timerRunning = pomodoroRunning;
+      data.pomodoro.timerLastTick = pomodoroRunning ? Date.now() : null;
+      saveData();
     }
     
     function getWeekStart() {
@@ -1753,11 +1814,13 @@
       pomodoroInterval = setInterval(() => {
         pomodoroTime--;
         updatePomodoroDisplay();
+        savePomodoroState();
         
         if (pomodoroTime <= 0) {
           completePomodoro();
         }
       }, 1000);
+      savePomodoroState();
       updatePomodoroDisplay();
     }
     
@@ -1765,6 +1828,7 @@
       pomodoroRunning = false;
       clearInterval(pomodoroInterval);
       pomodoroInterval = null;
+      savePomodoroState();
       updatePomodoroDisplay();
     }
     
@@ -1773,6 +1837,7 @@
       pomodoroMode = 'work';
       pomodoroTime = POMODORO_WORK;
       pomodoroPhase = 0;
+      savePomodoroState();
       updatePomodoroDisplay();
     }
     
@@ -1807,6 +1872,7 @@
         playNotification('休息结束！开始新的番茄');
       }
       
+      savePomodoroState();
       updatePomodoroDisplay();
     }
     

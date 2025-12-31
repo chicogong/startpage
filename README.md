@@ -6,13 +6,14 @@ A minimal, privacy-first personal start page with glassmorphism design.
 
 | Dark | Light |
 |------|-------|
-| ![Dark](screenshots/layout-dark.png) | ![Light](screenshots/layout-light.png) |
+| ![Dark](screenshots/desktop-dark.png) | ![Light](screenshots/desktop-light.png) |
 
 ## Features
 
 - **Quick Links** - Bookmarks with favicons and single-key shortcuts
+- **Pomodoro Timer** - Focus timer with customizable work/break intervals
 - **Countdown Timers** - Track important dates with urgency indicators
-- **Todo List** - Organize tasks by Today/Week/Later with archive
+- **Todo List** - Organize tasks by Today/Week/Later with drag-to-reorder and archive
 - **Vocabulary** - Spaced repetition (SM-2) with flashcard design, streak tracking
 - **Weather** - Real-time weather via Open-Meteo API with geolocation
 - **Daily Quote/Joke** - Toggle between inspirational quotes and jokes

@@ -41,10 +41,14 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
+    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text-primary);
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
     .bg-layer {
       position: fixed; inset: 0; z-index: -1;
@@ -178,9 +182,10 @@
       border: none; border-radius: 20px;
       text-decoration: none; color: var(--text-primary);
       font-size: 12px; font-weight: 500; white-space: nowrap;
-      transition: all 0.2s; cursor: grab;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: grab;
     }
-    .quick-link:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+    .quick-link:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .quick-link:active { transform: scale(0.97); }
     .quick-link.dragging { opacity: 0.5; cursor: grabbing; }
     .quick-link.drag-over { background: var(--accent); transform: scale(1.05); }
     .quick-link img { width: 16px; height: 16px; border-radius: 4px; pointer-events: none; }
@@ -246,9 +251,9 @@
     /* Card */
     .card {
       background: var(--glass-bg); backdrop-filter: blur(var(--blur));
-      border: 1px solid var(--glass-border); border-radius: var(--radius);
-      padding: 14px; display: flex; flex-direction: column;
-      transition: all 0.2s;
+      border: 1px solid var(--glass-border); border-radius: 24px;
+      padding: 16px; display: flex; flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card:hover { background: var(--glass-bg-hover); }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -257,9 +262,10 @@
       width: 28px; height: 28px; border-radius: 8px;
       background: transparent; border: none; color: var(--text-muted);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card-action:hover { background: var(--glass-bg); color: var(--text-primary); }
+    .card-action:active { transform: scale(0.9); }
 
     /* Countdown - Grid of small rounded cards */
     .countdown-list { 
@@ -270,10 +276,11 @@
     .countdown-item {
       display: flex; flex-direction: column; align-items: center;
       padding: 12px 8px; background: rgba(255,255,255,0.04);
-      border-radius: 16px; text-align: center;
-      position: relative; transition: all 0.2s;
+      border-radius: 20px; text-align: center;
+      position: relative; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .countdown-item:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+    .countdown-item:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .countdown-item:active { transform: scale(0.98); }
     .countdown-item.urgent { background: rgba(239, 68, 68, 0.1); }
     .countdown-item.soon { background: rgba(245, 158, 11, 0.1); }
     .countdown-info { margin-bottom: 4px; }
@@ -290,7 +297,7 @@
       width: 18px; height: 18px;
     }
     .countdown-item:hover .countdown-delete { opacity: 1; }
-    [data-theme="light"] .countdown-item { background: #fff; border: 1px solid #eee; }
+    [data-theme="light"] .countdown-item { background: #fff; border: 1px solid #eee; border-radius: 20px; }
     [data-theme="light"] .countdown-item:hover { background: #fafafa; }
     [data-theme="light"] .countdown-item.urgent { background: #fef2f2; border-color: #fecaca; }
     [data-theme="light"] .countdown-item.soon { background: #fffbeb; border-color: #fed7aa; }
@@ -298,43 +305,46 @@
     /* Todo */
     .todo-tabs {
       display: flex; gap: 2px; margin-bottom: 10px;
-      background: rgba(255,255,255,0.04); padding: 4px; border-radius: 12px;
+      background: rgba(255,255,255,0.04); padding: 4px; border-radius: 14px;
     }
     .todo-tab {
       flex: 1; padding: 8px; background: transparent; border: none;
-      border-radius: 10px; font-size: 11px; font-weight: 500;
+      border-radius: 12px; font-size: 11px; font-weight: 500;
       color: var(--text-muted); cursor: pointer; transition: all 0.2s;
     }
     .todo-tab.active { background: rgba(255,255,255,0.08); color: var(--text-primary); }
     .todo-input-row { display: flex; gap: 6px; margin-bottom: 8px; }
     .todo-input {
       flex: 1; padding: 10px 14px; background: rgba(255,255,255,0.04);
-      border: 1px solid transparent; border-radius: 12px;
+      border: 1px solid transparent; border-radius: 14px;
       color: var(--text-primary); font-size: 13px; outline: none;
     }
     .todo-input:focus { border-color: var(--accent); }
     .todo-input::placeholder { color: var(--text-muted); }
     .todo-add-btn {
       padding: 10px 16px; background: var(--accent); border: none;
-      border-radius: 12px; color: white; font-size: 14px;
+      border-radius: 14px; color: white; font-size: 14px;
       font-weight: 600; cursor: pointer;
     }
     .todo-add-btn:hover { background: var(--accent-hover); }
-    .todo-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; }
+    .todo-add-btn:active { transform: scale(0.97); }
+    .todo-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
     .todo-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; background: rgba(255,255,255,0.03);
-      border-radius: 12px; cursor: grab; transition: all 0.2s;
+      padding: 12px 14px; background: rgba(255,255,255,0.03);
+      border-radius: 14px; cursor: grab; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .todo-item:active { transform: scale(0.98); }
     .todo-item.dragging { opacity: 0.5; cursor: grabbing; }
     .todo-item.drag-over { background: var(--accent); transform: scale(1.02); }
     .todo-tab.drag-over { background: var(--accent) !important; color: white !important; }
     .todo-checkbox {
-      width: 16px; height: 16px; border: 2px solid var(--text-muted);
+      width: 18px; height: 18px; border: 2px solid var(--text-muted);
       border-radius: 50%; cursor: pointer; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
     }
-    .todo-checkbox:hover { border-color: var(--accent); }
+    .todo-checkbox:hover { border-color: var(--accent); transform: scale(1.1); }
     .todo-checkbox.checked { background: var(--success); border-color: var(--success); }
     .todo-checkbox.checked::after { content: "✓"; color: white; font-size: 10px; }
     .todo-text { flex: 1; font-size: 13px; }
@@ -371,12 +381,12 @@
       position: relative; min-height: 120px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px; padding: 16px;
+      border-radius: 20px; padding: 18px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s ease;
+      cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .vocab-flashcard:hover { background: rgba(255,255,255,0.05); }
-    .vocab-flashcard:active { transform: scale(0.99); }
+    .vocab-flashcard:active { transform: scale(0.98); }
     
     .vocab-word {
       font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px;
@@ -389,7 +399,13 @@
       border-radius: 12px; cursor: pointer; transition: all 0.2s;
     }
     .vocab-phonetic:hover { background: rgba(59,130,246,0.2); color: var(--accent); }
-    .vocab-phonetic .sound-icon { font-size: 11px; }
+    .vocab-phonetic.playing { 
+      background: rgba(59,130,246,0.3); 
+      color: var(--accent);
+      transform: scale(0.95);
+    }
+    .vocab-phonetic .sound-icon { font-size: 11px; transition: transform 0.2s; }
+    .vocab-phonetic.playing .sound-icon { transform: scale(1.2); }
     
     .vocab-divider {
       width: 40px; height: 2px; margin: 10px 0;
@@ -457,15 +473,16 @@
     /* Rating buttons */
     .vocab-actions {
       display: flex; justify-content: center; gap: 8px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
     .vocab-btn {
       display: flex; flex-direction: column; align-items: center; gap: 2px;
-      padding: 8px 12px; min-width: 56px;
-      border: none; border-radius: 10px;
+      padding: 10px 14px; min-width: 60px;
+      border: none; border-radius: 14px;
       font-size: 10px; font-weight: 600; cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .vocab-btn:active { transform: scale(0.92); }
     .vocab-btn .icon { font-size: 16px; }
     .vocab-btn.forgot { background: rgba(239,68,68,0.12); color: var(--danger); }
     .vocab-btn.forgot:hover { background: rgba(239,68,68,0.25); }
@@ -477,14 +494,15 @@
     .vocab-btn.easy:hover { background: rgba(59,130,246,0.25); }
     
     .vocab-btn-reveal {
-      width: 100%; padding: 10px;
+      width: 100%; padding: 12px;
       background: var(--accent);
-      border: none; border-radius: 10px;
+      border: none; border-radius: 14px;
       color: white; font-size: 12px; font-weight: 600;
-      cursor: pointer; transition: all 0.15s;
+      cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .vocab-btn-reveal:hover { background: var(--accent-hover); }
+    .vocab-btn-reveal:active { transform: scale(0.97); }
     
     /* Complete state */
     .vocab-complete { text-align: center; padding: 20px 10px; }
@@ -508,7 +526,7 @@
       .header { flex-wrap: wrap; gap: 10px; }
       .header-left { width: 100%; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
       .header-time { gap: 10px; }
-      .clock { font-size: 2rem; }
+      .clock { font-size: 2rem; font-weight: 200; }
       .greeting { font-size: 0.8rem; }
       .date { font-size: 0.7rem; }
       .header-weather { margin-left: 0; padding: 4px 10px; }
@@ -520,84 +538,119 @@
       .search-box input { width: 100%; }
       .search-box input:focus { width: 100%; }
       .header-actions { position: static; }
-      .icon-btn { width: 34px; height: 34px; }
+      .icon-btn { width: 38px; height: 38px; }
+      .icon-btn:active { transform: scale(0.9); }
       
-      /* Quick links mobile */
-      .quick-links { padding: 10px 12px; gap: 6px; border-radius: 16px; }
-      .quick-link { padding: 6px 10px; font-size: 11px; border-radius: 16px; }
-      .quick-link img { width: 14px; height: 14px; }
+      /* Quick links mobile - horizontal scroll */
+      .quick-links { 
+        padding: 10px 12px; gap: 8px; border-radius: 20px;
+        flex-wrap: nowrap; overflow-x: auto;
+        max-width: 100%; box-sizing: border-box;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .quick-links::-webkit-scrollbar { display: none; }
+      .quick-link { 
+        padding: 8px 12px; font-size: 11px; border-radius: 16px;
+        flex-shrink: 0;
+      }
+      .quick-link img { width: 16px; height: 16px; }
       .quick-link .key { display: none; }
       .add-link-btn, .batch-link-btn { display: none; }
       
-      /* Cards mobile */
-      .card { padding: 12px; border-radius: 14px; }
-      .card-header { margin-bottom: 8px; }
-      .card-title { font-size: 0.65rem; }
-      .card-action { width: 26px; height: 26px; }
+      /* Dashboard mobile */
+      .dashboard { overflow: hidden; }
       
-      /* Countdown mobile */
-      .countdown-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-      .countdown-item { padding: 10px 6px; border-radius: 12px; }
-      .countdown-name { font-size: 11px; }
-      .countdown-days { font-size: 1.3rem; }
+      /* Cards mobile - larger radius */
+      .card { padding: 14px; border-radius: 20px; overflow: hidden; min-width: 0; }
+      .card-header { margin-bottom: 12px; }
+      .card-title { font-size: 0.7rem; }
+      .card-action { width: 32px; height: 32px; }
       
-      /* Todo mobile */
-      .todo-tabs { padding: 3px; border-radius: 10px; }
-      .todo-tab { padding: 6px; font-size: 10px; border-radius: 8px; }
-      .todo-input { padding: 8px 12px; font-size: 12px; border-radius: 10px; }
-      .todo-add-btn { padding: 8px 14px; border-radius: 10px; }
-      .todo-item { padding: 8px 10px; border-radius: 10px; }
-      .todo-text { font-size: 12px; }
+      /* Countdown mobile - compact horizontal scroll */
+      .countdown-list { 
+        display: flex; 
+        flex-wrap: nowrap;
+        gap: 8px; 
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .countdown-list::-webkit-scrollbar { display: none; }
+      .countdown-item { 
+        flex-shrink: 0;
+        min-width: 75px;
+        padding: 10px 6px; 
+        border-radius: 14px; 
+      }
+      .countdown-name { font-size: 10px; font-weight: 600; }
+      .countdown-date { font-size: 8px; }
+      .countdown-days { font-size: 1.2rem; }
+      .countdown-label { font-size: 8px; }
+      
+      /* Todo mobile - more prominent */
+      .todo-tabs { padding: 4px; border-radius: 16px; }
+      .todo-tab { padding: 10px 14px; font-size: 12px; border-radius: 12px; }
+      .todo-tab:active { transform: scale(0.95); }
+      .todo-input { padding: 12px 16px; font-size: 14px; border-radius: 14px; }
+      .todo-add-btn { padding: 12px 18px; border-radius: 14px; font-size: 16px; }
+      .todo-item { padding: 12px 14px; border-radius: 14px; }
+      .todo-text { font-size: 14px; }
+      .todo-checkbox { width: 20px; height: 20px; }
       
       /* Daily quote mobile */
       .daily-quote { margin-bottom: 8px; }
-      .daily-quote .quote-text { font-size: 11px; }
+      .daily-quote .quote-text { font-size: 12px; line-height: 1.6; }
       .quote-actions { opacity: 1; }
       
       /* Vocab mobile */
-      .vocab-top-bar { margin-bottom: 8px; }
-      .vocab-streak-badge { padding: 3px 8px; font-size: 11px; border-radius: 12px; }
-      .vocab-streak-badge .fire { font-size: 12px; }
-      .vocab-xp-badge { padding: 3px 8px; font-size: 10px; border-radius: 12px; }
-      .vocab-progress-bar { height: 2px; margin-bottom: 10px; }
-      .vocab-flashcard { min-height: 100px; padding: 14px 12px; border-radius: 12px; }
+      .vocab-card { overflow: hidden; }
+      .vocab-top-bar { margin-bottom: 10px; }
+      .vocab-streak-badge { padding: 4px 10px; font-size: 11px; border-radius: 14px; }
+      .vocab-streak-badge .fire { font-size: 13px; }
+      .vocab-xp-badge { padding: 4px 10px; font-size: 10px; border-radius: 14px; }
+      .vocab-progress-bar { height: 3px; margin-bottom: 12px; border-radius: 2px; }
+      .vocab-flashcard { min-height: 100px; padding: 16px 14px; border-radius: 16px; }
       .vocab-word { font-size: 1.3rem; }
-      .vocab-phonetic { font-size: 11px; padding: 2px 6px; border-radius: 10px; }
-      .vocab-phonetic .sound-icon { font-size: 10px; }
-      .vocab-meaning { font-size: 12px; }
+      .vocab-phonetic { font-size: 11px; padding: 5px 10px; border-radius: 12px; }
+      .vocab-phonetic .sound-icon { font-size: 11px; }
+      .vocab-meaning { font-size: 12px; line-height: 1.5; }
       .vocab-divider { width: 30px; margin: 8px 0; }
-      .vocab-example { font-size: 10px; padding: 6px 8px; border-radius: 6px; }
-      .vocab-synonyms span { padding: 2px 6px; font-size: 9px; border-radius: 8px; }
-      .vocab-counter { font-size: 9px; top: 6px; right: 8px; }
-      .vocab-mastery { top: 6px; left: 8px; gap: 2px; }
+      .vocab-example { font-size: 10px; padding: 8px 10px; border-radius: 8px; }
+      .vocab-synonyms span { padding: 3px 8px; font-size: 9px; border-radius: 10px; }
+      .vocab-counter { font-size: 9px; top: 8px; right: 10px; }
+      .vocab-mastery { top: 8px; left: 10px; gap: 3px; }
       .vocab-mastery-dot { width: 5px; height: 5px; }
-      .vocab-tap-hint { font-size: 9px; bottom: 6px; }
-      .vocab-actions { gap: 6px; margin-top: 8px; }
-      .vocab-btn { padding: 6px 8px; min-width: 48px; border-radius: 8px; font-size: 9px; }
+      .vocab-tap-hint { font-size: 9px; bottom: 8px; }
+      .vocab-actions { gap: 6px; margin-top: 10px; }
+      .vocab-btn { padding: 8px 10px; min-width: 50px; border-radius: 10px; font-size: 9px; }
       .vocab-btn .icon { font-size: 14px; }
-      .vocab-btn-reveal { padding: 8px; font-size: 11px; border-radius: 8px; }
-      .vocab-complete { padding: 16px 8px; }
-      .vocab-complete-icon { font-size: 28px; }
+      .vocab-btn-reveal { padding: 10px; font-size: 12px; border-radius: 12px; width: 100%; box-sizing: border-box; }
+      .vocab-complete { padding: 20px 10px; }
+      .vocab-complete-icon { font-size: 32px; }
       .vocab-complete-title { font-size: 14px; }
-      .vocab-complete-text { font-size: 11px; }
+      .vocab-complete-text { font-size: 13px; }
       
       /* Modal mobile */
-      .modal { margin: 16px; padding: 18px; border-radius: 18px; max-width: calc(100% - 32px); }
-      .modal-title { font-size: 0.9rem; }
-      .form-input { padding: 10px 14px; font-size: 13px; }
-      .btn { padding: 10px 16px; font-size: 12px; }
+      .modal { margin: 16px; padding: 24px; border-radius: 24px; max-width: calc(100% - 32px); }
+      .modal-title { font-size: 1.1rem; }
+      .form-input { padding: 14px 18px; font-size: 15px; border-radius: 14px; }
+      .btn { padding: 14px 20px; font-size: 14px; border-radius: 14px; }
+      .btn:active { transform: scale(0.97); }
     }
     
     /* Extra small screens */
     @media (max-width: 380px) {
-      .container { padding: 10px 10px; }
-      .clock { font-size: 1.7rem; }
+      .container { padding: 10px 12px; }
+      .clock { font-size: 1.8rem; }
       .header-time { gap: 8px; }
       .quick-links { padding: 8px 10px; }
-      .quick-link { padding: 5px 8px; font-size: 10px; }
-      .countdown-list { grid-template-columns: 1fr 1fr; }
-      .vocab-btn { min-width: 42px; padding: 5px 6px; }
-      .vocab-btn .icon { font-size: 12px; }
+      .quick-link { padding: 6px 10px; font-size: 10px; }
+      .countdown-item { min-width: 80px; padding: 10px 8px; }
+      .countdown-days { font-size: 1.2rem; }
+      .vocab-btn { min-width: 55px; padding: 10px 12px; }
+      .vocab-btn .icon { font-size: 16px; }
       .vocab-word { font-size: 1.2rem; }
     }
     
@@ -2046,23 +2099,48 @@
       if (!word || word === '-') return;
       
       const phoneticEl = el('vocabPhonetic');
-      phoneticEl.style.transform = 'scale(0.95)';
-      setTimeout(() => phoneticEl.style.transform = '', 150);
+      phoneticEl.classList.add('playing');
+      setTimeout(() => phoneticEl.classList.remove('playing'), 300);
       
       try {
+        // Priority 1: Dictionary API audio (real human pronunciation)
         const dictData = await lookupWord(word);
         if (dictData && dictData.phonetics) {
           for (const p of dictData.phonetics) {
-            if (p.audio) {
-              new Audio(p.audio).play();
+            if (p.audio && p.audio.trim()) {
+              const audio = new Audio(p.audio);
+              audio.volume = 1.0;
+              await audio.play();
               return;
             }
           }
         }
-        // Fallback: use browser TTS
+        
+        // Priority 2: Google Translate TTS (more natural than browser TTS)
+        const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(word)}&tl=en&client=tw-ob`;
+        try {
+          const audio = new Audio(googleTtsUrl);
+          audio.volume = 1.0;
+          await audio.play();
+          return;
+        } catch (googleErr) {
+          console.log('Google TTS failed, trying browser TTS');
+        }
+        
+        // Priority 3: Browser TTS (last resort)
         if ('speechSynthesis' in window) {
+          // Cancel any ongoing speech
+          speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(word);
           utterance.lang = 'en-US';
+          utterance.rate = 0.9; // Slightly slower for clarity
+          utterance.pitch = 1.0;
+          // Try to find a native English voice
+          const voices = speechSynthesis.getVoices();
+          const englishVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('English')) 
+                            || voices.find(v => v.lang === 'en-US')
+                            || voices.find(v => v.lang.startsWith('en'));
+          if (englishVoice) utterance.voice = englishVoice;
           speechSynthesis.speak(utterance);
         }
       } catch (err) {

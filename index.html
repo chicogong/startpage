@@ -923,6 +923,246 @@
     .dict-meanings { max-height: 100px; overflow-y: auto; }
     .dict-meaning { margin-bottom: 4px; }
     .dict-pos { font-weight: 600; color: var(--text-secondary); margin-right: 4px; }
+
+    /* ========== Onboarding Styles ========== */
+    .onboarding-modal {
+      max-width: 500px;
+      min-height: 400px;
+      padding: 40px 32px;
+    }
+    .onboarding-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+    .onboarding-step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      animation: fadeSlideIn 0.3s ease-out;
+    }
+    .onboarding-step.active {
+      display: flex;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .onboarding-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .onboarding-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .onboarding-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.6;
+      max-width: 380px;
+    }
+    .onboarding-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 32px;
+    }
+    .onboarding-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid var(--glass-border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 48px;
+    }
+    .onboarding-option:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .onboarding-option:active {
+      transform: scale(0.98);
+    }
+    .onboarding-option.selected {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--accent);
+    }
+    .onboarding-option-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .onboarding-option-content {
+      flex: 1;
+      text-align: left;
+    }
+    .onboarding-option-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .onboarding-option-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .onboarding-textarea {
+      width: 100%;
+      max-width: 380px;
+      min-height: 180px;
+      padding: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .onboarding-textarea:focus {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.08);
+    }
+    .onboarding-textarea::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+    .onboarding-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      max-width: 380px;
+    }
+    .onboarding-progress {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .onboarding-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+    .onboarding-dot.active {
+      width: 24px;
+      border-radius: 4px;
+      background: var(--accent);
+    }
+    .onboarding-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      width: 100%;
+      max-width: 380px;
+    }
+    .onboarding-btn {
+      flex: 1;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 48px;
+      touch-action: manipulation;
+    }
+    .onboarding-btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .onboarding-btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    .onboarding-btn-primary:active {
+      transform: scale(0.98);
+    }
+    .onboarding-btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-secondary);
+      border: 1px solid var(--glass-border);
+    }
+    .onboarding-btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    .onboarding-btn-secondary:active {
+      transform: scale(0.98);
+    }
+
+    /* Mobile onboarding */
+    @media (max-width: 700px) {
+      .onboarding-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        border-radius: 0;
+        max-width: 100%;
+        max-height: 100vh;
+        padding: 24px 20px;
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .onboarding-icon {
+        font-size: 56px;
+        margin-bottom: 24px;
+      }
+      .onboarding-title {
+        font-size: 1.3rem;
+      }
+      .onboarding-description {
+        font-size: 13px;
+        max-width: 100%;
+      }
+      .onboarding-options,
+      .onboarding-textarea,
+      .onboarding-hint,
+      .onboarding-footer {
+        max-width: 100%;
+      }
+      .onboarding-option {
+        padding: 18px 20px;
+        min-height: 56px;
+      }
+      .onboarding-textarea {
+        min-height: 200px;
+        font-size: 14px;
+      }
+      .onboarding-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        padding-top: 20px;
+        margin-top: auto;
+      }
+      .onboarding-btn {
+        min-height: 52px;
+        font-size: 15px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1249,6 +1489,7 @@
         <div class="settings-actions">
           <button class="settings-action-btn" id="exportDataBtn"><span class="settings-action-icon">📦</span>导出全部数据</button>
           <button class="settings-action-btn" id="importDataBtn"><span class="settings-action-icon">📥</span>导入数据</button>
+          <button class="settings-action-btn" id="resetOnboardingBtn"><span class="settings-action-icon">🎯</span>重新引导</button>
           <button class="settings-action-btn danger" id="clearDataBtn"><span class="settings-action-icon">🗑️</span>清除本地存储</button>
         </div>
       </div>
@@ -1256,9 +1497,19 @@
     </div>
   </div>
 
+  <!-- Onboarding Modal -->
+  <div class="modal-overlay" id="onboardingModal">
+    <div class="modal onboarding-modal">
+      <div class="onboarding-content" id="onboardingContent">
+        <!-- Steps will be injected here -->
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = 'startpage_data';
     const defaultData = {
+      onboarded: false,
       theme: 'dark', background: 'gradient-1', customBg: '',
       links: [
         // AI Assistants
@@ -2401,6 +2652,7 @@
     el('saveBatchLinkBtn').onclick = addBatchLinks;
     el('importDataBtn').onclick = () => el('importFileInput').click();
     el('importFileInput').onchange = e => { if (e.target.files[0]) importD(e.target.files[0]); };
+    el('resetOnboardingBtn').onclick = () => { closeModal('settingsModal'); resetOnboarding(); };
     el('clearDataBtn').onclick = clearData;
     document.querySelectorAll('.modal-overlay').forEach(o => o.onclick = e => { if (e.target === o) closeModal(o.id); });
     document.onkeydown = e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id)); };
@@ -2900,7 +3152,277 @@
     // Initialize API features
     fetchWeather();
     fetchQuote();
-    
+
+    // ========== Onboarding System ==========
+    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent) || window.innerWidth <= 700;
+    let onboardingStep = 0;
+    const onboardingSteps = [
+      {
+        id: 'welcome',
+        icon: '👋',
+        title: '欢迎使用 Start Page',
+        description: '一个轻量、隐私优先的个人起始页。让我们花1分钟快速设置。',
+        content: '',
+        buttons: [
+          { text: '开始设置', primary: true, action: 'next' }
+        ]
+      },
+      {
+        id: 'theme',
+        icon: '🎨',
+        title: '选择主题',
+        description: '选择你喜欢的主题风格',
+        content: 'theme',
+        buttons: [
+          { text: '跳过', primary: false, action: 'next' },
+          { text: '下一步', primary: true, action: 'next' }
+        ]
+      },
+      {
+        id: 'location',
+        icon: '🌍',
+        title: '设置位置',
+        description: '用于显示天气信息',
+        content: 'location',
+        buttons: [
+          { text: '跳过', primary: false, action: 'next' },
+          { text: '下一步', primary: true, action: 'next' }
+        ]
+      },
+      {
+        id: 'import',
+        icon: '🔗',
+        title: '导入书签',
+        description: isMobile ? '粘贴你的常用链接，一行一个' : '快速导入你的常用链接',
+        content: 'import',
+        buttons: [
+          { text: '稍后添加', primary: false, action: 'next' },
+          { text: '导入', primary: true, action: 'import' }
+        ]
+      },
+      {
+        id: 'tutorial',
+        icon: '✨',
+        title: '快速教程',
+        description: '了解如何使用',
+        content: 'tutorial',
+        buttons: [
+          { text: '完成', primary: true, action: 'finish' }
+        ]
+      }
+    ];
+
+    function initOnboarding() {
+      if (data.onboarded) {
+        el('onboardingModal').classList.remove('active');
+        return;
+      }
+
+      renderOnboardingStep(0);
+      el('onboardingModal').classList.add('active');
+    }
+
+    function renderOnboardingStep(step) {
+      onboardingStep = step;
+      const stepData = onboardingSteps[step];
+      const content = el('onboardingContent');
+
+      // Progress dots
+      const progressDots = onboardingSteps.map((_, i) =>
+        `<div class="onboarding-dot ${i === step ? 'active' : ''}"></div>`
+      ).join('');
+
+      // Step content
+      let stepContent = '';
+      if (stepData.content === 'theme') {
+        stepContent = `
+          <div class="onboarding-options">
+            <div class="onboarding-option ${data.theme === 'dark' ? 'selected' : ''}" onclick="selectOnboardingTheme('dark')">
+              <div class="onboarding-option-icon">🌙</div>
+              <div class="onboarding-option-content">
+                <div class="onboarding-option-title">深色模式</div>
+                <div class="onboarding-option-desc">适合夜间使用</div>
+              </div>
+            </div>
+            <div class="onboarding-option ${data.theme === 'light' ? 'selected' : ''}" onclick="selectOnboardingTheme('light')">
+              <div class="onboarding-option-icon">☀️</div>
+              <div class="onboarding-option-content">
+                <div class="onboarding-option-title">浅色模式</div>
+                <div class="onboarding-option-desc">适合日间使用</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (stepData.content === 'location') {
+        stepContent = `
+          <div class="onboarding-options">
+            <div class="onboarding-option" onclick="requestGeolocation()">
+              <div class="onboarding-option-icon">📍</div>
+              <div class="onboarding-option-content">
+                <div class="onboarding-option-title">自动定位</div>
+                <div class="onboarding-option-desc">使用浏览器定位</div>
+              </div>
+            </div>
+          </div>
+          <div class="onboarding-hint">或者跳过此步骤，稍后在设置中手动添加城市</div>
+        `;
+      } else if (stepData.content === 'import') {
+        const placeholder = isMobile
+          ? 'https://google.com\nhttps://github.com\nhttps://twitter.com'
+          : '支持以下格式：\n\nhttps://google.com\nGoogle | https://google.com\nGoogle | https://google.com | g';
+        stepContent = `
+          <textarea class="onboarding-textarea" id="onboardingImportText"
+            placeholder="${placeholder}"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"></textarea>
+          <div class="onboarding-hint">${isMobile ? '支持格式：URL 或 名称 | URL 或 名称 | URL | 快捷键' : '每行一个链接，可选添加名称和快捷键'}</div>
+        `;
+      } else if (stepData.content === 'tutorial') {
+        const tips = isMobile ? [
+          { icon: '👆', text: '横向滑动快捷链接栏' },
+          { icon: '✋', text: '长按卡片开始拖拽排序' },
+          { icon: '📌', text: '点击 + 号添加新内容' }
+        ] : [
+          { icon: '⌨️', text: '使用 Cmd/Ctrl+K 快速搜索' },
+          { icon: '🔤', text: '按快捷键字母快速打开链接' },
+          { icon: '🖱️', text: '拖拽卡片和链接重新排序' }
+        ];
+        stepContent = `
+          <div class="onboarding-options">
+            ${tips.map(tip => `
+              <div class="onboarding-option" style="cursor: default; border: 1px solid var(--glass-border);">
+                <div class="onboarding-option-icon">${tip.icon}</div>
+                <div class="onboarding-option-content">
+                  <div class="onboarding-option-title">${tip.text}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // Buttons
+      const buttons = stepData.buttons.map(btn => `
+        <button class="onboarding-btn ${btn.primary ? 'onboarding-btn-primary' : 'onboarding-btn-secondary'}"
+          onclick="handleOnboardingAction('${btn.action}')">
+          ${btn.text}
+        </button>
+      `).join('');
+
+      content.innerHTML = `
+        <div class="onboarding-step active">
+          <div class="onboarding-progress">${progressDots}</div>
+          <div class="onboarding-icon">${stepData.icon}</div>
+          <h2 class="onboarding-title">${stepData.title}</h2>
+          <p class="onboarding-description">${stepData.description}</p>
+          ${stepContent}
+          <div class="onboarding-footer">
+            ${buttons}
+          </div>
+        </div>
+      `;
+
+      // Add haptic feedback for mobile
+      if (isMobile && navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
+
+    function selectOnboardingTheme(theme) {
+      data.theme = theme;
+      if (theme === 'light' && data.background && data.background.startsWith('gradient-')) {
+        data.background = 'light-1';
+      } else if (theme === 'dark' && data.background && data.background.startsWith('light-')) {
+        data.background = 'gradient-1';
+      }
+      saveData();
+      initTheme();
+      initBg();
+      renderOnboardingStep(onboardingStep);
+    }
+
+    function requestGeolocation() {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // Just trigger weather fetch with coordinates
+            fetchWeather();
+            if (isMobile && navigator.vibrate) navigator.vibrate(10);
+            setTimeout(() => handleOnboardingAction('next'), 500);
+          },
+          (error) => {
+            console.log('Geolocation denied:', error);
+            handleOnboardingAction('next');
+          }
+        );
+      }
+    }
+
+    function handleOnboardingAction(action) {
+      if (action === 'next') {
+        if (onboardingStep < onboardingSteps.length - 1) {
+          renderOnboardingStep(onboardingStep + 1);
+        }
+      } else if (action === 'import') {
+        const text = el('onboardingImportText')?.value.trim();
+        if (text) {
+          parseAndImportLinks(text);
+        }
+        handleOnboardingAction('next');
+      } else if (action === 'finish') {
+        data.onboarded = true;
+        saveData();
+        el('onboardingModal').classList.remove('active');
+      }
+    }
+
+    function parseAndImportLinks(text) {
+      const lines = text.split('\n').filter(l => l.trim());
+      const imported = [];
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        // Format 1: Just URL
+        if (trimmed.match(/^https?:\/\//)) {
+          const url = trimmed;
+          const name = new URL(url).hostname.replace('www.', '');
+          imported.push({ name, url, key: '' });
+        }
+        // Format 2: Name | URL or Name | URL | Key
+        else if (trimmed.includes('|')) {
+          const parts = trimmed.split('|').map(p => p.trim());
+          if (parts.length >= 2) {
+            const name = parts[0];
+            const url = parts[1];
+            const key = parts[2] || '';
+            if (url.match(/^https?:\/\//)) {
+              imported.push({ name, url, key });
+            }
+          }
+        }
+      }
+
+      if (imported.length > 0) {
+        // Prepend imported links
+        data.links = [...imported, ...data.links];
+        saveData();
+        renderLinks();
+      }
+    }
+
+    // Add reset onboarding option in settings
+    function resetOnboarding() {
+      data.onboarded = false;
+      saveData();
+      initOnboarding();
+    }
+
+    // Initialize onboarding on page load
+    initOnboarding();
+
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});

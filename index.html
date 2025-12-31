@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="description" content="A minimal, privacy-first personal start page">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
   <title>Start</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -174,10 +178,12 @@
       border: none; border-radius: 20px;
       text-decoration: none; color: var(--text-primary);
       font-size: 12px; font-weight: 500; white-space: nowrap;
-      transition: all 0.2s;
+      transition: all 0.2s; cursor: grab;
     }
     .quick-link:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
-    .quick-link img { width: 16px; height: 16px; border-radius: 4px; }
+    .quick-link.dragging { opacity: 0.5; cursor: grabbing; }
+    .quick-link.drag-over { background: var(--accent); transform: scale(1.05); }
+    .quick-link img { width: 16px; height: 16px; border-radius: 4px; pointer-events: none; }
     .quick-link .key { font-size: 9px; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; font-family: monospace; }
     .link-divider { width: 1px; height: 20px; background: var(--glass-border); margin: 0 4px; }
     .add-link-btn {
@@ -318,8 +324,11 @@
     .todo-item {
       display: flex; align-items: center; gap: 10px;
       padding: 10px 12px; background: rgba(255,255,255,0.03);
-      border-radius: 12px;
+      border-radius: 12px; cursor: grab; transition: all 0.2s;
     }
+    .todo-item.dragging { opacity: 0.5; cursor: grabbing; }
+    .todo-item.drag-over { background: var(--accent); transform: scale(1.02); }
+    .todo-tab.drag-over { background: var(--accent) !important; color: white !important; }
     .todo-checkbox {
       width: 16px; height: 16px; border: 2px solid var(--text-muted);
       border-radius: 50%; cursor: pointer; flex-shrink: 0;
@@ -938,6 +947,7 @@
       </div>
       <div class="form-group"><label class="form-label">名称</label><input type="text" class="form-input" id="countdownName" placeholder="事件名称"></div>
       <div class="form-group"><label class="form-label">日期</label><input type="date" class="form-input" id="countdownDate"></div>
+      <div class="form-group"><label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="countdownRepeat" style="width:16px;height:16px"> 每年重复</label></div>
       <div class="form-actions">
         <button class="btn btn-secondary" id="cancelCountdownBtn">取消</button>
         <button class="btn btn-primary" id="saveCountdownBtn">保存</button>
@@ -1123,13 +1133,33 @@
         return merged;
       } catch { return JSON.parse(JSON.stringify(defaultData)); }
     }
-    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.error('Failed to save data:', e);
+        alert('保存失败，可能是存储空间已满');
+      }
+    }
     function el(id) { return document.getElementById(id); }
     function ce(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; }
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
+    }
+    // Unified fetch with timeout
+    async function fetchWithTimeout(url, options = {}, timeout = 8000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (error) {
+        clearTimeout(id);
+        throw error;
+      }
     }
     function svg(d, w=14, h=14) {
       const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1193,10 +1223,29 @@
     }
 
     // Quick Links
+    // Drag state for links
+    let draggedLinkIdx = null;
+    
     function renderLinks(filter = '') {
       const c = el('quickLinks'); c.replaceChildren();
-      data.links.filter(l => !filter || l.name.toLowerCase().includes(filter.toLowerCase())).forEach(link => {
+      data.links.filter(l => !filter || l.name.toLowerCase().includes(filter.toLowerCase())).forEach((link, idx) => {
         const a = ce('a', 'quick-link'); a.href = link.url; a.target = '_blank'; a.dataset.key = link.key || '';
+        a.draggable = true;
+        a.dataset.idx = data.links.indexOf(link);
+        // Drag events
+        a.ondragstart = (e) => { draggedLinkIdx = parseInt(a.dataset.idx); a.classList.add('dragging'); };
+        a.ondragend = () => { a.classList.remove('dragging'); draggedLinkIdx = null; };
+        a.ondragover = (e) => { e.preventDefault(); a.classList.add('drag-over'); };
+        a.ondragleave = () => { a.classList.remove('drag-over'); };
+        a.ondrop = (e) => {
+          e.preventDefault(); a.classList.remove('drag-over');
+          const toIdx = parseInt(a.dataset.idx);
+          if (draggedLinkIdx !== null && draggedLinkIdx !== toIdx) {
+            const [moved] = data.links.splice(draggedLinkIdx, 1);
+            data.links.splice(toIdx, 0, moved);
+            saveData(); renderLinks(filter);
+          }
+        };
         const img = document.createElement('img');
         try { img.src = 'https://www.google.com/s2/favicons?domain=' + new URL(link.url).hostname + '&sz=32'; } catch {}
         a.appendChild(img); a.appendChild(ce('span', '', link.name));
@@ -1209,37 +1258,90 @@
     function addLink() {
       const name = el('linkName').value.trim(), url = el('linkUrl').value.trim(), key = el('linkKey').value.trim().toLowerCase();
       if (!name || !url) return alert('请填写名称和URL');
-      data.links.push({ name, url, key }); saveData(); renderLinks(); closeModal('linkModal');
+      // Validate URL format
+      try {
+        new URL(url.startsWith('http') ? url : 'https://' + url);
+      } catch (e) {
+        return alert('URL 格式不正确');
+      }
+      // Validate shortcut key (single letter or empty)
+      if (key && !/^[a-z]$/.test(key)) return alert('快捷键必须是单个字母');
+      // Check for duplicate shortcut key
+      if (key && data.links.some(l => l.key === key)) return alert('快捷键已被使用');
+      const finalUrl = url.startsWith('http') ? url : 'https://' + url;
+      data.links.push({ name, url: finalUrl, key }); saveData(); renderLinks(); closeModal('linkModal');
       ['linkName', 'linkUrl', 'linkKey'].forEach(id => el(id).value = '');
     }
 
     // Countdown
+    function getNextOccurrence(dateStr, repeat) {
+      if (!repeat) return new Date(dateStr);
+      const date = new Date(dateStr);
+      const now = new Date();
+      const thisYear = new Date(now.getFullYear(), date.getMonth(), date.getDate());
+      const nextYear = new Date(now.getFullYear() + 1, date.getMonth(), date.getDate());
+      return thisYear >= now ? thisYear : nextYear;
+    }
+    
     function renderCountdowns() {
       const c = el('countdownList'); c.replaceChildren(); const now = new Date();
       if (!data.countdowns.length) { c.appendChild(ce('div', 'empty-state', '暂无')); return; }
-      [...data.countdowns].sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(item => {
-        const idx = data.countdowns.indexOf(item), diff = Math.ceil((new Date(item.date) - now) / 864e5);
+      const sorted = [...data.countdowns].map(item => ({
+        ...item,
+        nextDate: getNextOccurrence(item.date, item.repeat)
+      })).sort((a, b) => a.nextDate - b.nextDate);
+      
+      sorted.forEach(item => {
+        const idx = data.countdowns.findIndex(c => c.name === item.name && c.date === item.date);
+        const diff = Math.ceil((item.nextDate - now) / 864e5);
         const d = ce('div', 'countdown-item' + (diff <= 3 ? ' urgent' : diff <= 7 ? ' soon' : ''));
-        const info = ce('div', 'countdown-info'); info.appendChild(ce('div', 'countdown-name', item.name)); info.appendChild(ce('div', 'countdown-date', item.date));
-        const time = ce('div', 'countdown-time'); time.appendChild(ce('div', 'countdown-days', diff > 0 ? diff : '过期')); time.appendChild(ce('div', 'countdown-label', diff > 0 ? '天' : ''));
+        const info = ce('div', 'countdown-info');
+        const nameEl = ce('div', 'countdown-name', item.name);
+        if (item.repeat) nameEl.innerHTML += ' <span style="font-size:10px;opacity:0.6">🔁</span>';
+        info.appendChild(nameEl);
+        info.appendChild(ce('div', 'countdown-date', item.nextDate.toLocaleDateString('zh-CN')));
+        const time = ce('div', 'countdown-time'); time.appendChild(ce('div', 'countdown-days', diff > 0 ? diff : '今天')); time.appendChild(ce('div', 'countdown-label', diff > 0 ? '天' : ''));
         const del = ce('button', 'card-action countdown-delete'); del.appendChild(svg('M18 6L6 18M6 6l12 12')); del.onclick = () => { data.countdowns.splice(idx, 1); saveData(); renderCountdowns(); };
         d.appendChild(info); d.appendChild(time); d.appendChild(del); c.appendChild(d);
       });
     }
     function addCountdown() {
       const name = el('countdownName').value.trim(), date = el('countdownDate').value;
-      if (!name || !date) return alert('请填写');
-      data.countdowns.push({ name, date }); saveData(); renderCountdowns(); closeModal('countdownModal');
-      el('countdownName').value = ''; el('countdownDate').value = '';
+      const repeat = el('countdownRepeat').checked;
+      if (!name || !date) return alert('请填写名称和日期');
+      // Validate date format
+      const dateObj = new Date(date);
+      if (isNaN(dateObj.getTime())) return alert('日期格式不正确');
+      data.countdowns.push({ name, date, repeat }); saveData(); renderCountdowns(); closeModal('countdownModal');
+      el('countdownName').value = ''; el('countdownDate').value = ''; el('countdownRepeat').checked = false;
     }
 
     // Todo
     let curTab = 'today';
+    let draggedTodoIdx = null;
+    let draggedFromTab = null;
+    
     function renderTodos() {
       const c = el('todoList'); c.replaceChildren(); const todos = data.todos[curTab] || [];
       if (!todos.length) { c.appendChild(ce('div', 'empty-state', '暂无')); return; }
       todos.forEach((t, i) => {
         const d = ce('div', 'todo-item' + (t.completed ? ' completed' : ''));
+        d.draggable = true;
+        d.dataset.idx = i;
+        // Drag events for reordering and moving between tabs
+        d.ondragstart = () => { draggedTodoIdx = i; draggedFromTab = curTab; d.classList.add('dragging'); };
+        d.ondragend = () => { d.classList.remove('dragging'); draggedTodoIdx = null; draggedFromTab = null; };
+        d.ondragover = (e) => { e.preventDefault(); d.classList.add('drag-over'); };
+        d.ondragleave = () => { d.classList.remove('drag-over'); };
+        d.ondrop = (e) => {
+          e.preventDefault(); d.classList.remove('drag-over');
+          const toIdx = parseInt(d.dataset.idx);
+          if (draggedTodoIdx !== null && draggedFromTab === curTab && draggedTodoIdx !== toIdx) {
+            const [moved] = data.todos[curTab].splice(draggedTodoIdx, 1);
+            data.todos[curTab].splice(toIdx, 0, moved);
+            saveData(); renderTodos();
+          }
+        };
         const cb = ce('div', 'todo-checkbox' + (t.completed ? ' checked' : '')); cb.onclick = () => { data.todos[curTab][i].completed = !t.completed; saveData(); renderTodos(); };
         const txt = ce('span', 'todo-text', t.text);
         const act = ce('div', 'todo-actions'); const del = ce('button', 'todo-action-btn'); del.appendChild(svg('M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2'));
@@ -1254,7 +1356,27 @@
       data.todos[curTab].unshift({ text: txt, completed: false });
       saveData(); renderTodos(); el('todoInput').value = '';
     }
-    function switchTab(t) { curTab = t; document.querySelectorAll('.todo-tab').forEach(e => e.classList.toggle('active', e.dataset.tab === t)); renderTodos(); }
+    function switchTab(t) {
+      curTab = t;
+      document.querySelectorAll('.todo-tab').forEach(e => {
+        e.classList.toggle('active', e.dataset.tab === t);
+        // Add drop target for moving todos between tabs
+        e.ondragover = (ev) => { ev.preventDefault(); e.classList.add('drag-over'); };
+        e.ondragleave = () => { e.classList.remove('drag-over'); };
+        e.ondrop = (ev) => {
+          ev.preventDefault(); e.classList.remove('drag-over');
+          const targetTab = e.dataset.tab;
+          if (draggedTodoIdx !== null && draggedFromTab && targetTab !== draggedFromTab) {
+            const [moved] = data.todos[draggedFromTab].splice(draggedTodoIdx, 1);
+            if (!data.todos[targetTab]) data.todos[targetTab] = [];
+            data.todos[targetTab].unshift(moved);
+            saveData();
+            if (curTab === draggedFromTab || curTab === targetTab) renderTodos();
+          }
+        };
+      });
+      renderTodos();
+    }
     function archiveTodos() { Object.keys(data.todos).forEach(t => data.todos[t] = data.todos[t].filter(x => !x.completed)); saveData(); renderTodos(); }
 
     // Vocab
@@ -1961,6 +2083,11 @@
     // Initialize API features
     fetchWeather();
     fetchQuote();
+    
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
   </script>
 </body>
 </html>

@@ -272,6 +272,17 @@
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card:hover { background: var(--glass-bg-hover); }
+    .card.draggable { cursor: grab; }
+    .card.dragging { 
+      opacity: 0.8; cursor: grabbing;
+      transform: scale(1.02) rotate(1deg);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    .card.drag-over {
+      box-shadow: 0 0 0 2px var(--accent);
+      transform: scale(1.01);
+    }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .card-title { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
     .card-action {
@@ -971,8 +982,8 @@
 
     <nav class="quick-links" id="quickLinks"></nav>
 
-    <main class="dashboard">
-      <section class="card">
+    <main class="dashboard" id="dashboard">
+      <section class="card" data-card-id="countdown">
         <div class="card-header">
           <span class="card-title">倒计时</span>
           <button class="card-action" id="addCountdownBtn">
@@ -982,7 +993,7 @@
         <div class="countdown-list" id="countdownList"></div>
       </section>
 
-      <section class="card pomodoro-card">
+      <section class="card pomodoro-card" data-card-id="pomodoro">
         <div class="card-header">
           <span class="card-title">番茄钟</span>
           <div class="pomodoro-stats">
@@ -1011,7 +1022,7 @@
         </div>
       </section>
 
-      <section class="card vocab-card">
+      <section class="card vocab-card" data-card-id="vocab">
         <div class="card-header">
           <span class="card-title">单词学习</span>
           <div class="vocab-header-actions">
@@ -1084,7 +1095,7 @@
         <div class="vocab-actions" id="vocabActions"></div>
       </section>
 
-      <section class="card">
+      <section class="card" data-card-id="todo">
         <div class="card-header">
           <span class="card-title">待办</span>
           <button class="card-action" id="archiveTodosBtn" title="归档">
@@ -1315,7 +1326,8 @@
         totalCount: 0,
         todayDate: null,
         weekStart: null
-      }
+      },
+      cardOrder: ['countdown', 'pomodoro', 'vocab', 'todo']
     };
     let data = loadData();
     function loadData() {
@@ -1551,6 +1563,107 @@
     let pomodoroRunning = false;
     const originalTitle = document.title;
     
+    // Card drag and drop
+    let draggedCard = null;
+    
+    function initCardDrag() {
+      const dashboard = el('dashboard');
+      const cards = dashboard.querySelectorAll('.card[data-card-id]');
+      
+      // Apply saved order
+      applyCardOrder();
+      
+      cards.forEach(card => {
+        card.classList.add('draggable');
+        card.draggable = true;
+        
+        // Desktop drag events
+        card.ondragstart = (e) => {
+          draggedCard = card;
+          card.classList.add('dragging');
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+          // Delay to allow drag image to be captured
+          setTimeout(() => card.style.opacity = '0.5', 0);
+        };
+        
+        card.ondragend = () => {
+          card.classList.remove('dragging');
+          card.style.opacity = '';
+          draggedCard = null;
+          document.querySelectorAll('.card.drag-over').forEach(c => c.classList.remove('drag-over'));
+        };
+        
+        card.ondragover = (e) => {
+          e.preventDefault();
+          if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+          if (draggedCard && draggedCard !== card) {
+            card.classList.add('drag-over');
+          }
+        };
+        
+        card.ondragleave = () => {
+          card.classList.remove('drag-over');
+        };
+        
+        card.ondrop = (e) => {
+          e.preventDefault();
+          card.classList.remove('drag-over');
+          if (draggedCard && draggedCard !== card) {
+            swapCards(draggedCard, card);
+          }
+        };
+        
+        // Touch drag support
+        initTouchDrag(card, {
+          onDragStart: (el) => el.dataset.cardId,
+          onDragOver: (elementBelow, fromId) => {
+            const targetCard = elementBelow.closest('.card[data-card-id]');
+            if (targetCard && targetCard.dataset.cardId !== fromId) return targetCard;
+            return null;
+          },
+          onDrop: (target, fromId) => {
+            const fromCard = document.querySelector(`.card[data-card-id="${fromId}"]`);
+            if (fromCard && target) {
+              swapCards(fromCard, target);
+            }
+          }
+        });
+      });
+    }
+    
+    function swapCards(card1, card2) {
+      const dashboard = el('dashboard');
+      const cards = [...dashboard.querySelectorAll('.card[data-card-id]')];
+      const idx1 = cards.indexOf(card1);
+      const idx2 = cards.indexOf(card2);
+      
+      if (idx1 < idx2) {
+        card2.after(card1);
+      } else {
+        card2.before(card1);
+      }
+      
+      // Update saved order
+      saveCardOrder();
+    }
+    
+    function saveCardOrder() {
+      const dashboard = el('dashboard');
+      const cards = dashboard.querySelectorAll('.card[data-card-id]');
+      data.cardOrder = [...cards].map(c => c.dataset.cardId);
+      saveData();
+    }
+    
+    function applyCardOrder() {
+      const dashboard = el('dashboard');
+      const order = data.cardOrder || ['countdown', 'pomodoro', 'vocab', 'todo'];
+      
+      order.forEach(id => {
+        const card = dashboard.querySelector(`.card[data-card-id="${id}"]`);
+        if (card) dashboard.appendChild(card);
+      });
+    }
+
     function initPomodoro() {
       // Reset daily/weekly counts if needed
       const today = new Date().toDateString();
@@ -2386,7 +2499,7 @@
     }
 
     // Init
-    initTheme(); initBg(); updateClock(); renderLinks(); renderCountdowns(); initPomodoro(); renderTodos(); updateStats(); nextWord();
+    initTheme(); initBg(); updateClock(); renderLinks(); renderCountdowns(); initPomodoro(); renderTodos(); updateStats(); nextWord(); initCardDrag();
     setInterval(updateClock, 1000); setInterval(renderCountdowns, 60000);
 
     // ========== API Features ==========

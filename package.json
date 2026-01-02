@@ -1,0 +1,24 @@
+{
+  "name": "startpage",
+  "version": "1.0.0",
+  "description": "A minimal, privacy-first personal start page with glassmorphism design.",
+  "main": "sw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chicogong/startpage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chicogong/startpage/issues"
+  },
+  "homepage": "https://github.com/chicogong/startpage#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}

@@ -16,10 +16,3 @@
 # Local env
 .env
 .env.local
-
-# Node
-node_modules/
-
-# Test results
-test-results/
-playwright-report/

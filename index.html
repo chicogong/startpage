@@ -2642,7 +2642,7 @@
       else if (!isLight && data.theme !== 'dark') { data.theme = 'dark'; initTheme(); }
       saveData(); initBg();
     });
-    el('exportDataBtn').onclick = () => openModal('exportModal');
+    el('exportDataBtn').onclick = () => { closeModal('settingsModal'); openModal('exportModal'); };
     el('closeExportModal').onclick = () => closeModal('exportModal');
     el('exportAll').onclick = exportAll;
     el('exportLinks').onclick = exportLinks;

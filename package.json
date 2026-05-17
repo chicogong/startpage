@@ -1,0 +1,27 @@
+{
+  "name": "startpage",
+  "version": "1.0.0",
+  "description": "A minimal, privacy-first personal start page with glassmorphism design.",
+  "main": "index.html",
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chicogong/startpage.git"
+  },
+  "keywords": ["startpage", "newtab", "pwa"],
+  "author": "chicogong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chicogong/startpage/issues"
+  },
+  "homepage": "https://github.com/chicogong/startpage#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}

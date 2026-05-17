@@ -38,6 +38,8 @@ test.describe('Onboarding', () => {
       await expect(dots.nth(i)).toHaveClass(/\bactive\b/);
       await expect(page.locator('.onboarding-dot.active')).toHaveCount(1);
 
+      // The last step has no "next" button, so the final iteration must not click.
+      // eslint-disable-next-line playwright/no-conditional-in-test
       if (i < STEP_TITLES.length - 1) {
         await page.locator('.onboarding-btn-primary').click();
       }
@@ -92,7 +94,7 @@ test.describe('Onboarding', () => {
     await expect(page.locator('h2.onboarding-title')).toHaveText(STEP_TITLES[4]);
 
     const after = (await readData(page)).links || [];
-    expect(after.length).toBe(before.length + 2);
+    expect(after).toHaveLength(before.length + 2);
 
     // Imported links are prepended, in textarea order.
     expect(after[0]).toMatchObject({ name: 'github.com', url: 'https://github.com', key: '' });

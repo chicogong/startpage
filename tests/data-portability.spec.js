@@ -7,9 +7,8 @@ async function openExportModal(page) {
   await expect(page.locator('#settingsModal')).toHaveClass(/active/);
   await page.locator('#exportDataBtn').click();
   await expect(page.locator('#exportModal')).toHaveClass(/active/);
-  // The settings modal stays open behind the export modal; close it so its
-  // controls do not intercept clicks on the export options.
-  await page.locator('#closeSettingsModal').click();
+  // Opening the export modal closes the settings modal underneath it, so the
+  // two overlays never stack.
   await expect(page.locator('#settingsModal')).not.toHaveClass(/active/);
 }
 

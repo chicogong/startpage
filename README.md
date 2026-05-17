@@ -51,6 +51,23 @@ Twitter | https://twitter.com | t
 - localStorage for persistence
 - Service Worker for offline support
 
+## Testing
+
+End-to-end tests run with [Playwright](https://playwright.dev/) and cover every
+feature — onboarding, links, search, pomodoro, todos, countdowns, vocabulary,
+theme and settings. The suite runs on both a desktop and a mobile viewport.
+
+```bash
+npm install
+npx playwright install chromium
+npm test            # run all tests (desktop + mobile)
+npm run test:ui     # interactive UI mode
+npm run test:report # open the last HTML report
+```
+
+Tests load `index.html` directly over `file://` and block external requests, so
+they need no server and no network. CI runs them on every push and pull request.
+
 ## License
 
 MIT

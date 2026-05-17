@@ -37,6 +37,8 @@ test.describe('Pomodoro feature', () => {
     await expect(page.locator('#pomodoroStartBtn')).toHaveText('开始');
 
     const frozen = await page.locator('#pomodoroTime').textContent();
+    // Verifying the paused timer does NOT change inherently requires real time.
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1500);
     await expect(page.locator('#pomodoroTime')).toHaveText(frozen);
   });

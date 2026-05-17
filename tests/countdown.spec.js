@@ -87,6 +87,8 @@ test.describe('Countdown', () => {
     // The delete button is only `pointer-events:auto` while the item is hovered,
     // and hovering applies a transform — use force to avoid the stability race.
     await item.hover();
+    // The delete button is revealed on hover with a transform; force avoids the race.
+    // eslint-disable-next-line playwright/no-force-option
     await item.locator('button.countdown-delete').click({ force: true });
 
     await expect.poll(async () => (await readData(page)).countdowns.length).toBe(0);

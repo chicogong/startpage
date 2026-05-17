@@ -63,10 +63,12 @@ npx playwright install chromium
 npm test            # run all tests (desktop + mobile)
 npm run test:ui     # interactive UI mode
 npm run test:report # open the last HTML report
+npm run lint        # ESLint over the test suite
 ```
 
 Tests load `index.html` directly over `file://` and block external requests, so
-they need no server and no network. CI runs them on every push and pull request.
+they need no server and no network. CI lints and runs the suite on every push
+and pull request.
 
 ## License
 
